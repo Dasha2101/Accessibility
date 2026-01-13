@@ -1,17 +1,9 @@
-import type { ModuleCheckResult } from '../types';
+import type { ModuleCheckResult } from '../../types';
+import { mockImg } from '../mock-data/mockData';
 
 export const checkAltAttributes = (): ModuleCheckResult[] => {
-  const mockHtml = `
-    <html>
-      <body>
-        <img src="logo.png" alt="Company Logo" />
-        <img src="banner.jpg" />
-        <img src="icon.svg" alt="" />
-      </body>
-    </html>
-  `;
   const parser = new DOMParser();
-  const doc = parser.parseFromString(mockHtml, 'text/html');
+  const doc = parser.parseFromString(mockImg, 'text/html');
   const images = Array.from(doc.querySelectorAll('img'));
 
   return images.map(img => {

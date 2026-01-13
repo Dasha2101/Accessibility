@@ -1,13 +1,15 @@
 import React, { useState } from 'react';
 import type { ModuleCheckResult } from '../../types';
-import { checkAltAttributes } from '../../modules/atlChecker';
+import { checkAltAttributes } from '../../modules/alt-checker/atlChecker';
+import { checkContrast } from '../../modules/contrast-checker/contrastChecker';
 
 const ResultTable: React.FC = () => {
   const [results, setResults] = useState<ModuleCheckResult[]>([]);
 
   const handleCheckAll = () => {
     const altResults = checkAltAttributes();
-    setResults([...altResults])
+    const contrastResult = checkContrast();
+    setResults([...altResults, ...contrastResult])
   };
 
   return (
