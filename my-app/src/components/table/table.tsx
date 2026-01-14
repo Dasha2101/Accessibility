@@ -4,6 +4,7 @@ import { checkAltAttributes } from '../../modules/alt-checker/atlChecker';
 import { checkContrast } from '../../modules/contrast-checker/contrastChecker';
 import { checkKeyBoard } from '../../modules/keyboard-checker/keyboardChecker';
 import { checkStructure } from '../../modules/structure-checker/structure-ckecker';
+import { checkScalability } from '../../modules/scalability-checker/scalabilityChecker';
 
 const ResultTable: React.FC = () => {
   const [results, setResults] = useState<ModuleCheckResult[]>([]);
@@ -13,8 +14,9 @@ const ResultTable: React.FC = () => {
     const contrastResult = checkContrast();
     const keyboardResult = checkKeyBoard()
     const structureResult = checkStructure();
+    const scalabilityResult = checkScalability();
 
-    setResults([...keyboardResult, ...altResults, ...contrastResult, ...structureResult])
+    setResults([...keyboardResult, ...altResults, ...contrastResult, ...structureResult, ...scalabilityResult])
   };
 
   return (
