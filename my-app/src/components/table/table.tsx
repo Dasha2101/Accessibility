@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import type { ModuleCheckResult } from '../../types';
 import { checkAltAttributes } from '../../modules/alt-checker/atlChecker';
 import { checkContrast } from '../../modules/contrast-checker/contrastChecker';
+import { checkKeyBoard } from '../../modules/keyboard-checker/keyboardChecker';
 
 const ResultTable: React.FC = () => {
   const [results, setResults] = useState<ModuleCheckResult[]>([]);
@@ -9,7 +10,9 @@ const ResultTable: React.FC = () => {
   const handleCheckAll = () => {
     const altResults = checkAltAttributes();
     const contrastResult = checkContrast();
-    setResults([...altResults, ...contrastResult])
+    const keyboardResult = checkKeyBoard()
+
+    setResults([...keyboardResult, ...altResults, ...contrastResult])
   };
 
   return (
