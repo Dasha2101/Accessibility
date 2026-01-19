@@ -5,45 +5,58 @@ import { checkContrast } from '../../modules/contrast-checker/contrastChecker';
 import { checkKeyBoard } from '../../modules/keyboard-checker/keyboardChecker';
 import { checkStructure } from '../../modules/structure-checker/structure-ckecker';
 import { checkScalability } from '../../modules/scalability-checker/scalabilityChecker';
+import { checkMedia } from '../../modules/media-checker/mediaChecker';
+import './table.css';
 
 const ResultTable: React.FC = () => {
   const [results, setResults] = useState<ModuleCheckResult[]>([]);
 
   const handleCheckAll = () => {
     const altResults = checkAltAttributes();
-    const contrastResult = checkContrast();
-    const keyboardResult = checkKeyBoard()
-    const structureResult = checkStructure();
-    const scalabilityResult = checkScalability();
+    const contrastResults = checkContrast();
+    const keyboardResults = checkKeyBoard();
+    const structureResults = checkStructure();
+    const scalabilityResults = checkScalability();
+    const mediaResults = checkMedia();
 
-    setResults([...keyboardResult, ...altResults, ...contrastResult, ...structureResult, ...scalabilityResult])
+    setResults([
+      ...keyboardResults,
+      ...altResults,
+      ...contrastResults,
+      ...structureResults,
+      ...scalabilityResults,
+      ...mediaResults,
+    ]);
   };
 
   return (
-    <div style={{ marginTop: '20px' }}>
+    <div>
       <button onClick={handleCheckAll}>Начать проверку всех модулей</button>
-
       {results.length > 0 && (
-        <table border={1} cellPadding={5} style={{ marginTop: '10px', borderCollapse: 'collapse' }}>
-          <thead>
-            <tr>
-              <th>Модуль</th>
-              <th>Элемент</th>
-              <th>Проблема</th>
-              <th>Статус</th>
-            </tr>
-          </thead>
-          <tbody>
-            {results.map((r, idx) => (
-              <tr key={idx}>
-                <td>{r.moduleName}</td>
-                <td>{r.item}</td>
-                <td>{r.issue}</td>
-                <td>{r.status}</td>
+        <div className="result-table-wrapper">
+          <table className="result-table">
+            <thead>
+              <tr>
+                <th>Модуль</th>
+                <th>Элемент</th>
+                <th>Проблема</th>
+                <th>Статус</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {results.map((r, idx) => (
+                <tr key={idx}>
+                  <td>{r.moduleName}</td>
+                  <td>{r.item}</td>
+                  <td>{r.issue}</td>
+                  <td className={`status-${r.status}`}>
+                    {r.status}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       )}
     </div>
   );
