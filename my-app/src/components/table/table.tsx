@@ -20,10 +20,10 @@ const ResultTable: React.FC = () => {
     const mediaResults = checkMedia();
 
     setResults([
-      ...keyboardResults,
       ...altResults,
       ...contrastResults,
       ...structureResults,
+      ...keyboardResults,
       ...scalabilityResults,
       ...mediaResults,
     ]);
