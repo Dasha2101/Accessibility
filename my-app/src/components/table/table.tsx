@@ -1,37 +1,59 @@
 import React, { useState } from 'react';
+import LoadingIndicator from '../loading/loading';
 import type { ModuleCheckResult } from '../../types';
-import { checkAltAttributes } from '../../modules/alt-checker/atlChecker';
-import { checkContrast } from '../../modules/contrast-checker/contrastChecker';
-import { checkKeyBoard } from '../../modules/keyboard-checker/keyboardChecker';
-import { checkStructure } from '../../modules/structure-checker/structure-ckecker';
-import { checkScalability } from '../../modules/scalability-checker/scalabilityChecker';
-import { checkMedia } from '../../modules/media-checker/mediaChecker';
 import './table.css';
 
-const ResultTable: React.FC = () => {
-  const [results, setResults] = useState<ModuleCheckResult[]>([]);
+interface ResultTableProps {
+  url: string,
+  results: ModuleCheckResult[];
+  setResults: (results: ModuleCheckResult[]) => void;
+}
 
-  const handleCheckAll = () => {
-    const altResults = checkAltAttributes();
-    const contrastResults = checkContrast();
-    const keyboardResults = checkKeyBoard();
-    const structureResults = checkStructure();
-    const scalabilityResults = checkScalability();
-    const mediaResults = checkMedia();
+const ResultTable: React.FC<ResultTableProps> = ({ url, results, setResults }) => {
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
 
-    setResults([
-      ...altResults,
-      ...contrastResults,
-      ...structureResults,
-      ...keyboardResults,
-      ...scalabilityResults,
-      ...mediaResults,
-    ]);
+  const handleCheckAll = async () => {
+    if (!url) {
+      setError('Введите корректный URL для проверки');
+      return
+    }
+
+    setLoading(true);
+    setError('');
+    setResults([]);
+
+ try {
+      const response = await fetch('http://localhost:3001/api/check-all', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ url }),
+      });
+
+    if (!response.ok) {
+      setError(`Ошибка запроса к серверу: ${response.status}`);
+      setLoading(false);
+      return;
+    }
+
+    const data: ModuleCheckResult[] = await response.json();
+    setResults(data);
+
+    } catch {
+      setError('Произошла неизвестная ошибка');
+    } finally {
+      setLoading(false);
+    }
   };
 
-  return (
+   return (
     <div>
-      <button onClick={handleCheckAll}>Начать проверку всех модулей</button>
+      <button onClick={handleCheckAll} disabled={loading}>
+         {loading && <LoadingIndicator message="Идёт проверка..." />}
+      </button>
+
+      {error && <p style={{ color: 'red' }}>{error}</p>}
+
       {results.length > 0 && (
         <div className="result-table-wrapper">
           <table className="result-table">
@@ -49,9 +71,7 @@ const ResultTable: React.FC = () => {
                   <td>{r.moduleName}</td>
                   <td>{r.item}</td>
                   <td>{r.issue}</td>
-                  <td className={`status-${r.status}`}>
-                    {r.status}
-                  </td>
+                  <td className={`status-${r.status}`}>{r.status}</td>
                 </tr>
               ))}
             </tbody>

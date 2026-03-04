@@ -1,6 +1,6 @@
 import type { ModuleCheckResult, CheckStatus } from '../../../types';
 import puppeteer from 'puppeteer';
-import { INTERACTIVE_SELECTORS } from '../../../utils/keyboard/keyboard';
+import { INTERACTIVE_SELECTORS } from '../../../utils/keyboard/keyboard.ts';
 
 export const checkKeyBoard = async (url: string): Promise<ModuleCheckResult[]> => {
   const browser = await puppeteer.launch();

@@ -17,7 +17,6 @@ const CONTRAST_OFFSET = 0.05;
 const hexToRgb = (hex: string) => {
   const cleaned = hex.replace('#', '');
   const value = parseInt(cleaned, 16);
-
   return {
     r: (value >> 16) & 255,
     g: (value >> 8) & 255,
@@ -25,10 +24,16 @@ const hexToRgb = (hex: string) => {
   };
 };
 
+export const rgbToHex = (rgb: string): string => {
+  const match = rgb.match(/\d+/g);
+  if (!match) return '#000000';
+  const [r, g, b] = match.map(Number);
+  return '#' + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
+};
+
 //  Преобразование sRGB канала в линейное значение
 const normalizeChannel = (value: number): number => {
   const normalized = value / 255;
-
   return normalized <= SRGB_THRESHOLD
     ? normalized / SRGB_DIVISOR
     : Math.pow((normalized + SRGB_OFFSET) / SRGB_SCALE, SRGB_EXPONENT);
@@ -47,9 +52,7 @@ const luminance = ({ r, g, b }: { r: number; g: number; b: number }) => {
 export const getContrastRatio = (color1: string, color2: string): number => {
   const lum1 = luminance(hexToRgb(color1));
   const lum2 = luminance(hexToRgb(color2));
-
   const brightest = Math.max(lum1, lum2);
   const darkest = Math.min(lum1, lum2);
-
   return (brightest + CONTRAST_OFFSET) / (darkest + CONTRAST_OFFSET);
 };
