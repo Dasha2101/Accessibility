@@ -10,8 +10,10 @@ const MainPage: React.FC = () => {
 
   return (
     <main className="page">
-      <h1 className="page-title">Демонстрационная страница проверки доступности</h1>
-      <UrlInput url={url} setUrl={setUrl}/>
+      <h1 className="page-title">
+        Демонстрационная страница проверки доступности
+      </h1>
+      <UrlInput url={url} setUrl={setUrl} />
       <ResultTable url={url} setResults={setResults} results={results} />
     </main>
   );

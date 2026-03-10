@@ -8,9 +8,15 @@ export const checkMedia = async (url: string): Promise<ModuleCheckResult[]> => {
 
   const results: ModuleCheckResult[] = await page.evaluate(() => {
     const results: ModuleCheckResult[] = [];
-    const videos = Array.from(document.querySelectorAll<HTMLVideoElement>('video'));
-    videos.forEach(video => {
-      const tracks = Array.from(video.querySelectorAll('track[kind="subtitles"], track[kind="captions"]'));
+    const videos = Array.from(
+      document.querySelectorAll<HTMLVideoElement>('video'),
+    );
+    videos.forEach((video) => {
+      const tracks = Array.from(
+        video.querySelectorAll(
+          'track[kind="subtitles"], track[kind="captions"]',
+        ),
+      );
       if (tracks.length === 0) {
         results.push({
           moduleName: 'Доступность мультимедиа',
@@ -21,8 +27,10 @@ export const checkMedia = async (url: string): Promise<ModuleCheckResult[]> => {
       }
     });
 
-    const audios = Array.from(document.querySelectorAll<HTMLAudioElement>('audio'));
-    audios.forEach(audio => {
+    const audios = Array.from(
+      document.querySelectorAll<HTMLAudioElement>('audio'),
+    );
+    audios.forEach((audio) => {
       const hasTranscription =
         audio.getAttribute('aria-describedby') ||
         audio.nextElementSibling?.tagName.toLowerCase() === 'div';

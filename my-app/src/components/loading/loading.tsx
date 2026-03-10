@@ -5,7 +5,9 @@ interface LoadingIndicatorProps {
   message?: string;
 }
 
-const LoadingIndicator: React.FC<LoadingIndicatorProps> = ({ message = 'Загрузка...' }) => {
+const LoadingIndicator: React.FC<LoadingIndicatorProps> = ({
+  message = 'Загрузка...',
+}) => {
   return (
     <div className="loading-wrapper">
       <div className="spinner" />

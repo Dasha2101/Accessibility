@@ -4,41 +4,44 @@ import type { ModuleCheckResult } from '../../types';
 import './table.css';
 
 interface ResultTableProps {
-  url: string,
+  url: string;
   results: ModuleCheckResult[];
   setResults: (results: ModuleCheckResult[]) => void;
 }
 
-const ResultTable: React.FC<ResultTableProps> = ({ url, results, setResults }) => {
+const ResultTable: React.FC<ResultTableProps> = ({
+  url,
+  results,
+  setResults,
+}) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
   const handleCheckAll = async () => {
     if (!url) {
       setError('Введите корректный URL для проверки');
-      return
+      return;
     }
 
     setLoading(true);
     setError('');
     setResults([]);
 
- try {
+    try {
       const response = await fetch('http://localhost:3001/api/check-all', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ url }),
       });
 
-    if (!response.ok) {
-      setError(`Ошибка запроса к серверу: ${response.status}`);
-      setLoading(false);
-      return;
-    }
+      if (!response.ok) {
+        setError(`Ошибка запроса к серверу: ${response.status}`);
+        setLoading(false);
+        return;
+      }
 
-    const data: ModuleCheckResult[] = await response.json();
-    setResults(data);
-
+      const data: ModuleCheckResult[] = await response.json();
+      setResults(data);
     } catch {
       setError('Произошла неизвестная ошибка');
     } finally {
@@ -46,10 +49,10 @@ const ResultTable: React.FC<ResultTableProps> = ({ url, results, setResults }) =
     }
   };
 
-   return (
+  return (
     <div>
       <button onClick={handleCheckAll} disabled={loading}>
-         {loading && <LoadingIndicator message="Идёт проверка..." />}
+        {loading && <LoadingIndicator message="Идёт проверка..." />}
       </button>
 
       {error && <p style={{ color: 'red' }}>{error}</p>}

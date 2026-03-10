@@ -1,16 +1,20 @@
 import type { ModuleCheckResult, CheckStatus } from '../../../types';
 import puppeteer from 'puppeteer';
 
-export const checkStructure = async (url: string): Promise<ModuleCheckResult[]> => {
+export const checkStructure = async (
+  url: string,
+): Promise<ModuleCheckResult[]> => {
   const browser = await puppeteer.launch();
   const page = await browser.newPage();
   await page.goto(url, { waitUntil: 'networkidle2' });
 
   const results: ModuleCheckResult[] = await page.evaluate(() => {
     const results: ModuleCheckResult[] = [];
-    const headers = Array.from(document.querySelectorAll('h1, h2, h3, h4, h5, h6'));
+    const headers = Array.from(
+      document.querySelectorAll('h1, h2, h3, h4, h5, h6'),
+    );
     let lastLevel = 0;
-    headers.forEach(el => {
+    headers.forEach((el) => {
       const level = parseInt(el.tagName[1], 10);
       const text = el.textContent?.trim() || '[пустой заголовок]';
 
@@ -43,7 +47,7 @@ export const checkStructure = async (url: string): Promise<ModuleCheckResult[]> 
       });
     }
 
-    ['main', 'header', 'footer', 'nav'].forEach(tag => {
+    ['main', 'header', 'footer', 'nav'].forEach((tag) => {
       const el = document.querySelector(tag);
       if (!el) {
         results.push({
@@ -56,8 +60,8 @@ export const checkStructure = async (url: string): Promise<ModuleCheckResult[]> 
     });
 
     const lists = Array.from(document.querySelectorAll('ul, ol'));
-    lists.forEach(list => {
-      Array.from(list.children).forEach(li => {
+    lists.forEach((list) => {
+      Array.from(list.children).forEach((li) => {
         if (li.tagName.toLowerCase() !== 'li') {
           results.push({
             moduleName: 'Структура интерфейса',
@@ -70,7 +74,7 @@ export const checkStructure = async (url: string): Promise<ModuleCheckResult[]> 
     });
 
     const tables = Array.from(document.querySelectorAll('table'));
-    tables.forEach(table => {
+    tables.forEach((table) => {
       if (!table.querySelector('thead') || !table.querySelector('tbody')) {
         results.push({
           moduleName: 'Структура интерфейса',
@@ -91,10 +95,14 @@ export const checkStructure = async (url: string): Promise<ModuleCheckResult[]> 
       }
     });
 
-    const inputs = Array.from(document.querySelectorAll('input, select, textarea'));
-    inputs.forEach(input => {
+    const inputs = Array.from(
+      document.querySelectorAll('input, select, textarea'),
+    );
+    inputs.forEach((input) => {
       const id = input.getAttribute('id');
-      const hasLabel = id && document.querySelector(`label[for="${id}"]`) || input.closest('label');
+      const hasLabel =
+        (id && document.querySelector(`label[for="${id}"]`)) ||
+        input.closest('label');
       if (!hasLabel) {
         results.push({
           moduleName: 'Структура интерфейса',
@@ -105,14 +113,19 @@ export const checkStructure = async (url: string): Promise<ModuleCheckResult[]> 
       }
     });
 
-    const ariaElements = Array.from(document.querySelectorAll('[role], [aria-label], [aria-labelledby], [aria-hidden]'));
-    ariaElements.forEach(el => {
+    const ariaElements = Array.from(
+      document.querySelectorAll(
+        '[role], [aria-label], [aria-labelledby], [aria-hidden]',
+      ),
+    );
+    ariaElements.forEach((el) => {
       const role = el.getAttribute('role');
       if (role === 'presentation' && el.children.length > 0) {
         results.push({
           moduleName: 'Структура интерфейса',
           item: el.tagName.toLowerCase(),
-          issue: 'role="presentation" с вложенными элементами может скрывать контент',
+          issue:
+            'role="presentation" с вложенными элементами может скрывать контент',
           status: 'warning' as CheckStatus,
         });
       }
