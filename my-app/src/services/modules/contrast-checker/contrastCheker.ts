@@ -3,7 +3,7 @@ import {
   rgbToHex,
 } from '../../../utils/contrast/contrast.ts';
 import puppeteer from 'puppeteer';
-import type { CheckStatus, ModuleCheckResult } from '../../../types';
+import type { CheckStatus, ModuleCheckResult } from '../../../types/types.ts';
 
 const MIN_CONTRAST_RATIO_NORMAL_TEXT = 4.5;
 const MIN_CONTRAST_RATIO_LARGE_TEXT = 3;

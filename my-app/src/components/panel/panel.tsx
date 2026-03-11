@@ -1,8 +1,9 @@
 import React from 'react';
 import Button from '../button/button';
-import type { ModuleCheckResult } from '../../types';
+import type { ModuleCheckResult } from '../../types/types';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
+import robotoTTF from '../../fonts/RobotoBase64';
 
 
 type PanelProps = {
@@ -43,7 +44,9 @@ const Panel: React.FC<PanelProps> = ({ results }) => {
   const exportPDF = () => {
     const doc = new jsPDF();
 
-    doc.setFont('helvetica');
+    doc.addFileToVFS('Roboto-Regular.ttf', robotoTTF);
+    doc.addFont('Roboto-Regular.ttf', 'Roboto', 'normal');
+    doc.setFont('Roboto');
     doc.setFontSize(16);
     doc.text('Accessibility Report', 14, 20);
 
@@ -54,7 +57,7 @@ const Panel: React.FC<PanelProps> = ({ results }) => {
       body: tableRows,
       startY: 30,
       styles: { fontSize: 10 },
-      headStyles: { fillColor: [52, 73, 94], textColor: 255 },
+      headStyles: { fillColor: [52, 73, 94], textColor: 255, font: 'Roboto' },
     });
 
     doc.save('accessibility-report.pdf');

@@ -1,4 +1,4 @@
-import type { ModuleCheckResult, CheckStatus } from '../../../types';
+import type { ModuleCheckResult, CheckStatus } from '../../../types/types';
 import puppeteer from 'puppeteer';
 
 export const SCALE_FACTORS = [1.5, 2];

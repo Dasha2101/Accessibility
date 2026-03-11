@@ -1,5 +1,5 @@
 import type { CheerioAPI } from 'cheerio';
-import type { ModuleCheckResult, CheckStatus } from '../../../types';
+import type { ModuleCheckResult, CheckStatus } from '../../../types/types';
 
 export const checkARIAAttributes = ($: CheerioAPI): ModuleCheckResult[] => {
   const interactiveElements = $(

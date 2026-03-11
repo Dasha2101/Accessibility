@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import ResultTable from '../../components/table/table';
 import UrlInput from '../../components/input/input';
 import Panel from '../../components/panel/panel';
-import type { ModuleCheckResult } from '../../types';
+import type { ModuleCheckResult } from '../../types/types';
 import './mainPage.css';
 
 const MainPage: React.FC = () => {

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import LoadingIndicator from '../loading/loading';
-import type { ModuleCheckResult } from '../../types';
+import type { ModuleCheckResult } from '../../types/types';
 import './table.css';
 
 interface ResultTableProps {

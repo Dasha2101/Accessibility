@@ -1,4 +1,4 @@
-import type { ModuleCheckResult, CheckStatus } from '../../../types';
+import type { ModuleCheckResult, CheckStatus } from '../../../types/types.ts';
 import puppeteer from 'puppeteer';
 import { INTERACTIVE_SELECTORS } from '../../../utils/keyboard/keyboard.ts';
 

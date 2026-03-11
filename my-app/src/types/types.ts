@@ -8,3 +8,5 @@ export interface ModuleCheckResult {
   status: CheckStatus;
   wcagLvl?: WcagLevel;
 }
+
+

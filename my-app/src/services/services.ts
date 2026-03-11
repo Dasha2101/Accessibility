@@ -10,7 +10,7 @@ import { checkStructure } from './modules/structure-checker/structureChecker.ts'
 import { checkScalability } from './modules/scalability-checker/scalabilityChecker.ts';
 import { checkARIAAttributes } from './modules/aria-checker/ariaChecker.ts';
 import { checkMedia } from './modules/media-checker/mediaChecker.ts';
-import type { ModuleCheckResult } from '../types';
+import type { ModuleCheckResult } from '../types/types.ts';
 
 const app = express();
 app.use(cors());
