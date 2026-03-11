@@ -5,22 +5,26 @@ export const checkAltAtributes = ($: CheerioAPI): ModuleCheckResult[] => {
   const images = $('img');
   return images
     .map((_, img) => {
-      const alt = $(img).attr('alt') ?? '';
+      const alt = $(img).attr('alt');
       const src = $(img).attr('src') ?? 'Не указан src';
+      const genericAlt = ['image', 'photo', 'picture', 'img'];
 
       if (alt === undefined) {
         return {
           moduleName: 'Альтернативный текст',
-          item: src ?? 'Не указан src',
+          item: src,
           issue: 'Отсутствует атрибут alt',
           status: 'error' as CheckStatus,
         };
       }
 
-      if (alt.trim() === '') {
+      const altTrim = alt.trim().toLowerCase();
+
+      if (altTrim === '') {
         const role = $(img).attr('role');
         const ariaHidden = $(img).attr('aria-hidden');
         const decorative = role === 'presentation' || ariaHidden === 'true';
+
         return {
           moduleName: 'Альтернативный текст',
           item: src,
@@ -28,6 +32,15 @@ export const checkAltAtributes = ($: CheerioAPI): ModuleCheckResult[] => {
             ? 'Декоративное изображение — пустой alt допустим'
             : 'Пустой alt',
           status: decorative ? ('ok' as CheckStatus) : ('error' as CheckStatus),
+        };
+      }
+
+      if (genericAlt.includes(altTrim)) {
+        return {
+          moduleName: 'Альтернативный текст',
+          item: src,
+          issue: 'Неинформативный alt',
+          status: 'warning' as CheckStatus,
         };
       }
 

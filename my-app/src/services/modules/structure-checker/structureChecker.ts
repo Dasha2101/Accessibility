@@ -6,7 +6,7 @@ export const checkStructure = async (
 ): Promise<ModuleCheckResult[]> => {
   const browser = await puppeteer.launch();
   const page = await browser.newPage();
-  await page.goto(url, { waitUntil: 'networkidle2' });
+  await page.goto(url, { waitUntil: 'networkidle2', timeout: 0 });
 
   const results: ModuleCheckResult[] = await page.evaluate(() => {
     const results: ModuleCheckResult[] = [];

@@ -2,8 +2,6 @@ import express from 'express';
 import cors from 'cors';
 import axios from 'axios';
 import * as cheerio from 'cheerio';
-// import fs from 'fs';
-// import path from 'path';
 
 import { checkAltAtributes } from './modules/alt-checker/altChecker.ts';
 import { checkContrast } from './modules/contrast-checker/contrastCheker.ts';
@@ -18,17 +16,6 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// const toCSV = (results: ModuleCheckResult[]) => {
-//   const headers = ['moduleName', 'item', 'issue', 'status'];
-//   const rows = results.map(r => [
-//     r.moduleName,
-//     `"${r.item.replace(/"/g, '""')}"`,
-//     `"${r.issue.replace(/"/g, '""')}"`,
-//     r.status
-//   ].join(','));
-//   return [headers.join(','), ...rows].join('\n');
-// };
-
 app.post('/api/check-all', async (req, res) => {
   const { url } = req.body;
   if (!url) return res.status(400).json({ error: 'URL не указан' });
@@ -36,7 +23,14 @@ app.post('/api/check-all', async (req, res) => {
   const results: ModuleCheckResult[] = [];
 
   try {
-    const { data: html } = await axios.get(url);
+    const { data: html } = await axios.get(url, {
+      headers: {
+        'User-Agent':
+          'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/120 Safari/537.36',
+        'Accept-Language': 'en-US,en;q=0.9',
+      },
+      timeout: 10000,
+    });
     const $ = cheerio.load(html);
     results.push(...checkAltAtributes($));
     results.push(...(await checkContrast(url)));
@@ -44,13 +38,8 @@ app.post('/api/check-all', async (req, res) => {
     results.push(...(await checkStructure(url)));
     results.push(...(await checkScalability(url)));
     results.push(...(await checkMedia(url)));
-    results.push(...(await checkARIAAttributes(url)));
+    results.push(...(await checkARIAAttributes($)));
 
-    // const jsonPath = path.join(process.cwd(), 'results.json');
-    // fs.writeFileSync(jsonPath, JSON.stringify(results, null, 2), 'utf-8');
-
-    // const csvPath = path.join(process.cwd(), 'results.csv');
-    // fs.writeFileSync(csvPath, toCSV(results), 'utf-8');
     res.json(results);
   } catch (err) {
     console.error(err);
@@ -58,4 +47,6 @@ app.post('/api/check-all', async (req, res) => {
   }
 });
 
-app.listen(3001, () => {});
+app.listen(3001, () => {
+  console.log('dkkdkd');
+});

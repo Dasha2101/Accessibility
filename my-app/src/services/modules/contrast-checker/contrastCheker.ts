@@ -13,7 +13,7 @@ export const checkContrast = async (
 ): Promise<ModuleCheckResult[]> => {
   const browser = await puppeteer.launch();
   const page = await browser.newPage();
-  await page.goto(url, { waitUntil: 'networkidle2' });
+  await page.goto(url, { waitUntil: 'networkidle2', timeout: 0 });
 
   const elementsData = await page.evaluate(() => {
     const elements = Array.from(

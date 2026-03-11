@@ -2,7 +2,9 @@ import type { CheerioAPI } from 'cheerio';
 import type { ModuleCheckResult, CheckStatus } from '../../../types';
 
 export const checkARIAAttributes = ($: CheerioAPI): ModuleCheckResult[] => {
-  const interactiveElements = $('a[href], button, input, select, textarea, [role]');
+  const interactiveElements = $(
+    'a[href], button, input, select, textarea, [role]',
+  );
 
   return interactiveElements
     .map((_, el) => {
@@ -27,8 +29,13 @@ export const checkARIAAttributes = ($: CheerioAPI): ModuleCheckResult[] => {
         return results;
       }
 
-      const needsRole =
-        !['a', 'button', 'input', 'select', 'textarea'].includes(tag);
+      const needsRole = ![
+        'a',
+        'button',
+        'input',
+        'select',
+        'textarea',
+      ].includes(tag);
       if (needsRole && !role) {
         results.push({
           moduleName: 'ARIA атрибуты',

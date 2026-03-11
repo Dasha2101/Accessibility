@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import ResultTable from '../../components/table/table';
 import UrlInput from '../../components/input/input';
+import Panel from '../../components/panel/panel';
 import type { ModuleCheckResult } from '../../types';
 import './mainPage.css';
 
@@ -15,6 +16,7 @@ const MainPage: React.FC = () => {
       </h1>
       <UrlInput url={url} setUrl={setUrl} />
       <ResultTable url={url} setResults={setResults} results={results} />
+      <Panel results={results} />
     </main>
   );
 };
