@@ -1,4 +1,4 @@
-export type CheckStatus = 'ok' | 'warning' | 'error';
+export type CheckStatus = 'success' | 'warning' | 'error';
 export type WcagLevel = 'A' | 'AA' | 'AAA';
 
 export interface ModuleCheckResult {
@@ -9,4 +9,6 @@ export interface ModuleCheckResult {
   wcagLvl?: WcagLevel;
 }
 
-
+export type CheckOptions = {
+  maxElements?: number;
+};

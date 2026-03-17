@@ -3,13 +3,13 @@ import cors from 'cors';
 import axios from 'axios';
 import * as cheerio from 'cheerio';
 
-import { checkAltAtributes } from './modules/alt-checker/altChecker.ts';
-import { checkContrast } from './modules/contrast-checker/contrastCheker.ts';
-import { checkKeyBoard } from './modules/keyboard-checker/keyboardChecker.ts';
-import { checkStructure } from './modules/structure-checker/structureChecker.ts';
-import { checkScalability } from './modules/scalability-checker/scalabilityChecker.ts';
-import { checkARIAAttributes } from './modules/aria-checker/ariaChecker.ts';
-import { checkMedia } from './modules/media-checker/mediaChecker.ts';
+import { checkAltAtributes } from './modules/alt-checker/altChecker';
+import { checkContrast } from './modules/contrast-checker/contrastCheker';
+import { checkKeyBoard } from './modules/keyboard-checker/keyboardChecker';
+// import { checkStructure } from './modules/structure-checker/structureChecker';
+// import { checkScalability } from './modules/scalability-checker/scalabilityChecker';
+import { checkARIAAttributes } from './modules/aria-checker/ariaChecker';
+import { checkFullPageDynamic } from './modules/media-checker/mediaChecker';
 import type { ModuleCheckResult } from '../types/types.ts';
 
 const app = express();
@@ -29,15 +29,15 @@ app.post('/api/check-all', async (req, res) => {
           'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/120 Safari/537.36',
         'Accept-Language': 'en-US,en;q=0.9',
       },
-      timeout: 10000,
+      timeout: 60000,
     });
     const $ = cheerio.load(html);
     results.push(...checkAltAtributes($));
     results.push(...(await checkContrast(url)));
     results.push(...(await checkKeyBoard(url)));
-    results.push(...(await checkStructure(url)));
-    results.push(...(await checkScalability(url)));
-    results.push(...(await checkMedia(url)));
+    // results.push(...(await checkStructure(url)));
+    // results.push(...(await checkScalability(url)));
+    results.push(...(await checkFullPageDynamic(url)));
     results.push(...(await checkARIAAttributes($)));
 
     res.json(results);

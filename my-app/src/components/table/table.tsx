@@ -28,7 +28,7 @@ const ResultTable: React.FC<ResultTableProps> = ({
     setResults([]);
 
     try {
-      const response = await fetch('http://localhost:3001/api/check-all', {
+      const response = await fetch('http://213.171.3.128:3001/api/check-all', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ url }),

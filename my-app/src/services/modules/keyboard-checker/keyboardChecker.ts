@@ -1,96 +1,148 @@
-import type { ModuleCheckResult, CheckStatus } from '../../../types/types.ts';
+import type {
+  ModuleCheckResult,
+  CheckStatus,
+  CheckOptions,
+} from '../../../types/types';
 import puppeteer from 'puppeteer';
-import { INTERACTIVE_SELECTORS } from '../../../utils/keyboard/keyboard.ts';
+import { INTERACTIVE_SELECTORS } from '../../../utils/keyboard/keyboard';
+
+const DEFAULT_MAX = 20;
+const HEAVY_PAGE_MAX = 10;
 
 export const checkKeyBoard = async (
   url: string,
+  options?: CheckOptions,
 ): Promise<ModuleCheckResult[]> => {
-  const browser = await puppeteer.launch();
-  const page = await browser.newPage();
-  await page.goto(url, { waitUntil: 'networkidle2', timeout: 0 });
+  const browser = await puppeteer.launch({
+    args: ['--no-sandbox', '--disable-setuid-sandbox'],
+  });
 
-  const results: ModuleCheckResult[] = await page.evaluate(
-    (selectors: string[]) => {
-      const isHidden = (el: HTMLElement): boolean => {
-        const style = window.getComputedStyle(el);
-        return (
-          style.display === 'none' ||
-          style.visibility === 'hidden' ||
-          style.opacity === '0'
-        );
-      };
+  try {
+    const page = await browser.newPage();
+    await page.goto(url, {
+      waitUntil: 'domcontentloaded',
+      timeout: 10000,
+    });
 
-      const isNaturallyFocusable = (el: HTMLElement): boolean => {
-        const tag = el.tagName.toLowerCase();
-        return ['a', 'button', 'input', 'select', 'textarea'].includes(tag);
-      };
+    const totalElements = await page.evaluate((selectors: string[]) => {
+      return document.querySelectorAll(selectors.join(',')).length;
+    }, INTERACTIVE_SELECTORS);
 
-      const hasFocusableTabIndex = (el: HTMLElement): boolean => {
-        const tabindex = el.getAttribute('tabindex');
-        return tabindex !== null && Number(tabindex) >= 0;
-      };
+    const maxElements =
+      options?.maxElements ?? (totalElements > 1000 ? HEAVY_PAGE_MAX : DEFAULT_MAX);
 
-      const hasPositiveTabIndex = (el: HTMLElement): boolean => {
-        const tabindex = el.getAttribute('tabindex');
-        return tabindex !== null && Number(tabindex) > 0;
-      };
+    const elementsData: ModuleCheckResult[] = await page.evaluate(
+      (selectors: string[], max: number) => {
+        const isHidden = (el: HTMLElement): boolean => {
+          const style = window.getComputedStyle(el);
+          return style.display === 'none' || style.visibility === 'hidden' || style.opacity === '0';
+        };
 
-      const elements = Array.from(
-        document.querySelectorAll(selectors.join(',')),
-      ) as HTMLElement[];
-      const results: ModuleCheckResult[] = [];
+        const isNaturallyFocusable = (el: HTMLElement): boolean => {
+          const tag = el.tagName.toLowerCase();
+          return ['a', 'button', 'input', 'select', 'textarea'].includes(tag);
+        };
 
-      elements.forEach((el) => {
-        const identifier =
-          el.getAttribute('aria-label') ||
-          el.getAttribute('id') ||
-          el.tagName.toLowerCase() ||
-          'unknown element';
+        const hasFocusableTabIndex = (el: HTMLElement): boolean => {
+          const tabindex = el.getAttribute('tabindex');
+          return tabindex !== null && Number(tabindex) >= 0;
+        };
 
-        const style = window.getComputedStyle(el);
+        const hasPositiveTabIndex = (el: HTMLElement): boolean => {
+          const tabindex = el.getAttribute('tabindex');
+          return tabindex !== null && Number(tabindex) > 0;
+        };
 
-        if (
-          isHidden(el) &&
-          (isNaturallyFocusable(el) || hasFocusableTabIndex(el))
-        )
-          results.push({
-            moduleName: 'Клавиатурная навигация',
-            item: identifier,
-            issue: 'Элемент скрыт но доступен для фокуса',
-            status: 'error' as CheckStatus,
-          });
+        const elements = Array.from(document.querySelectorAll(selectors.join(','))).slice(0, max) as HTMLElement[];
 
-        if (!isNaturallyFocusable(el) && !hasFocusableTabIndex(el)) {
-          results.push({
-            moduleName: 'Клавиатурная навигация',
-            item: identifier,
-            issue: 'tabindex="-1" делает элемент недоступным',
-            status: 'error' as CheckStatus,
-          });
-        }
+        const results: ModuleCheckResult[] = [];
+        const seenItems = new Set<string>();
 
-        if (hasPositiveTabIndex(el)) {
-          results.push({
-            moduleName: 'Клавиатурная навигация',
-            item: identifier,
-            issue: 'tabindex > 0 нарушает порядок фокуса',
-            status: 'warning' as CheckStatus,
-          });
-        }
+        elements.forEach((el) => {
+          const identifier =
+            el.getAttribute('aria-label') ||
+            el.getAttribute('id') ||
+            el.tagName.toLowerCase() ||
+            'unknown element';
 
-        if (style.outlineStyle === 'none' || style.outlineWidth === '0px') {
-          results.push({
-            moduleName: 'Клавиатурная навигация',
-            item: identifier,
-            issue: 'Фокус не имеет видимого индикатора',
-            status: 'warning' as CheckStatus,
-          });
-        }
+          if (seenItems.has(identifier)) return;
+          seenItems.add(identifier);
+
+          const style = window.getComputedStyle(el);
+
+          if (isHidden(el) && (isNaturallyFocusable(el) || hasFocusableTabIndex(el))) {
+            results.push({
+              moduleName: 'Клавиатурная навигация',
+              item: identifier,
+              issue: 'Элемент скрыт, но доступен для фокуса',
+              status: 'error',
+            });
+          }
+
+          if (!isNaturallyFocusable(el) && !hasFocusableTabIndex(el)) {
+            results.push({
+              moduleName: 'Клавиатурная навигация',
+              item: identifier,
+              issue: 'Элемент недоступен с клавиатуры',
+              status: 'error',
+            });
+          }
+
+          if (hasPositiveTabIndex(el)) {
+            results.push({
+              moduleName: 'Клавиатурная навигация',
+              item: identifier,
+              issue: 'tabindex > 0 нарушает порядок фокуса',
+              status: 'warning',
+            });
+          }
+
+          if (style.outlineStyle === 'none' || style.outlineWidth === '0px') {
+            results.push({
+              moduleName: 'Клавиатурная навигация',
+              item: identifier,
+              issue: 'Фокус не имеет видимого индикатора',
+              status: 'warning',
+            });
+          }
+        });
+
+        return results;
+      },
+      INTERACTIVE_SELECTORS,
+      maxElements,
+    );
+
+    // // Если проверили не всех элементов
+    // if (totalElements > maxElements) {
+    //   elementsData.push({
+    //     moduleName: 'Клавиатурная навигация',
+    //     item: 'Общий результат',
+    //     issue: `Проверено только ${maxElements} из ${totalElements} элементов`,
+    //     status: 'warning',
+    //   });
+    // }
+
+    if (elementsData.length === 0) {
+      elementsData.push({
+        moduleName: 'Клавиатурная навигация',
+        item: 'Все элементы',
+        issue: 'Ошибки не найдены',
+        status: 'success',
       });
-      return results;
-    },
-    INTERACTIVE_SELECTORS,
-  );
-  await browser.close();
-  return results;
+    }
+
+    return elementsData;
+  } catch (error) {
+    return [
+      {
+        moduleName: 'Клавиатурная навигация',
+        item: 'Ошибка',
+        issue: 'Не удалось выполнить проверку клавиатурной навигации',
+        status: 'error' as CheckStatus,
+      },
+    ];
+  } finally {
+    await browser.close();
+  }
 };

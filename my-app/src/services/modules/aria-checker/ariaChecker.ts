@@ -1,84 +1,93 @@
 import type { CheerioAPI } from 'cheerio';
-import type { ModuleCheckResult, CheckStatus } from '../../../types/types';
+import type {
+  ModuleCheckResult,
+  CheckStatus,
+  CheckOptions,
+} from '../../../types/types';
 
-export const checkARIAAttributes = ($: CheerioAPI): ModuleCheckResult[] => {
-  const interactiveElements = $(
-    'a[href], button, input, select, textarea, [role]',
-  );
+const DEFAULT_MAX = 40;
+const HEAVY_PAGE_MAX = 25;
 
-  return interactiveElements
-    .map((_, el) => {
-      const $el = $(el);
-      const tag = el.tagName.toLowerCase();
-      const role = $el.attr('role');
-      const ariaLabel = $el.attr('aria-label');
-      const ariaHidden = $el.attr('aria-hidden');
-      const textContent = $el.text().trim();
+export const checkARIAAttributes = (
+  $: CheerioAPI,
+  options?: CheckOptions,
+): ModuleCheckResult[] => {
+  const selector = 'a[href], button, input, select, textarea, [role]';
 
-      const identifier = ariaLabel || $el.attr('id') || tag;
+  const allElements = $(selector);
+  const totalElements = allElements.length;
 
-      const results: ModuleCheckResult[] = [];
+  const maxElements =
+    options?.maxElements ??
+    (totalElements > 1000 ? HEAVY_PAGE_MAX : DEFAULT_MAX);
 
-      if (ariaHidden === 'true') {
-        results.push({
-          moduleName: 'ARIA атрибуты',
-          item: identifier,
-          issue: 'Элемент скрыт от скринридеров (aria-hidden="true")',
-          status: 'ok' as CheckStatus,
-        });
-        return results;
-      }
+  const limitedElements = allElements.slice(0, maxElements);
+  const results: ModuleCheckResult[] = [];
+  const seenItems = new Set<string>();
 
-      const needsRole = ![
-        'a',
-        'button',
-        'input',
-        'select',
-        'textarea',
-      ].includes(tag);
-      if (needsRole && !role) {
-        results.push({
-          moduleName: 'ARIA атрибуты',
-          item: identifier,
-          issue: 'Элемент интерактивный, но role не указан',
-          status: 'error' as CheckStatus,
-        });
-      }
+  const addResult = (
+    identifier: string,
+    issue: string,
+    status: CheckStatus,
+  ) => {
+    const key = `${identifier}-${issue}`;
+    if (!seenItems.has(key)) {
+      results.push({
+        moduleName: 'ARIA атрибуты',
+        item: identifier,
+        issue,
+        status,
+      });
+      seenItems.add(key);
+    }
+  };
 
-      if (!textContent && !ariaLabel && tag !== 'input') {
-        results.push({
-          moduleName: 'ARIA атрибуты',
-          item: identifier,
-          issue: 'Элемент интерактивный, но нет aria-label или видимого текста',
-          status: 'error' as CheckStatus,
-        });
-      }
-
-      const allLabels = Array.from(
-        $('a[href], button, input, select, textarea, [role]').map((_, e) =>
-          $(e).attr('aria-label'),
-        ),
-      );
-      if (ariaLabel && allLabels.filter((l) => l === ariaLabel).length > 1) {
-        results.push({
-          moduleName: 'ARIA атрибуты',
-          item: identifier,
-          issue: `Дублирующий aria-label="${ariaLabel}"`,
-          status: 'warning' as CheckStatus,
-        });
-      }
-
-      if (results.length === 0) {
-        results.push({
-          moduleName: 'ARIA атрибуты',
-          item: identifier,
-          issue: 'OK',
-          status: 'ok' as CheckStatus,
-        });
-      }
-
-      return results;
-    })
+  const allLabels = allElements
+    .map((_, el) => $(el).attr('aria-label'))
     .get()
-    .flat();
+    .filter(Boolean);
+
+  limitedElements.each((_, el) => {
+    const $el = $(el);
+    const tag = el.tagName.toLowerCase();
+
+    const role = $el.attr('role');
+    const ariaLabel = $el.attr('aria-label');
+    const textContent = $el.text().trim();
+
+    const identifier = ariaLabel || $el.attr('id') || tag;
+
+    const isNativeInteractive = [
+      'a',
+      'button',
+      'input',
+      'select',
+      'textarea',
+    ].includes(tag);
+
+    if (!isNativeInteractive && !role) {
+      addResult(
+        identifier,
+        'Элемент интерактивный, но role не указан',
+        'error',
+      );
+    }
+
+    if (!textContent && !ariaLabel && tag !== 'input') {
+      addResult(identifier, 'Нет aria-label или видимого текста', 'error');
+    }
+
+    if (ariaLabel) {
+      const duplicates = allLabels.filter((l) => l === ariaLabel).length;
+
+      if (duplicates > 1) {
+        addResult(
+          identifier,
+          `Дублирующий aria-label="${ariaLabel}"`,
+          'warning',
+        );
+      }
+    }
+  });
+  return results;
 };

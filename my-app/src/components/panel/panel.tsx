@@ -5,7 +5,6 @@ import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import robotoTTF from '../../fonts/RobotoBase64';
 
-
 type PanelProps = {
   results: ModuleCheckResult[];
 };
