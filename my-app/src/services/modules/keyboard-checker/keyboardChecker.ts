@@ -1,41 +1,56 @@
+import { Page } from 'puppeteer';
 import type {
   ModuleCheckResult,
   CheckStatus,
   CheckOptions,
 } from '../../../types/types';
-import puppeteer from 'puppeteer';
 import { INTERACTIVE_SELECTORS } from '../../../utils/keyboard/keyboard';
 
 const DEFAULT_MAX = 20;
 const HEAVY_PAGE_MAX = 10;
 
 export const checkKeyBoard = async (
-  url: string,
+  page: Page,
   options?: CheckOptions,
 ): Promise<ModuleCheckResult[]> => {
-  const browser = await puppeteer.launch({
-    args: ['--no-sandbox', '--disable-setuid-sandbox'],
-  });
-
   try {
-    const page = await browser.newPage();
-    await page.goto(url, {
-      waitUntil: 'domcontentloaded',
-      timeout: 10000,
-    });
-
     const totalElements = await page.evaluate((selectors: string[]) => {
       return document.querySelectorAll(selectors.join(',')).length;
     }, INTERACTIVE_SELECTORS);
 
     const maxElements =
-      options?.maxElements ?? (totalElements > 1000 ? HEAVY_PAGE_MAX : DEFAULT_MAX);
+      options?.maxElements ??
+      (totalElements > 1000 ? HEAVY_PAGE_MAX : DEFAULT_MAX);
 
-    const elementsData: ModuleCheckResult[] = await page.evaluate(
-      (selectors: string[], max: number) => {
+    const results: ModuleCheckResult[] = await page.evaluate(
+      (selectors: string[], max: number, total: number) => {
+        const results: ModuleCheckResult[] = [];
+        const seenItems = new Set<string>();
+
+        const addResult = (
+          item: string,
+          issue: string,
+          status: CheckStatus,
+        ) => {
+          const key = `${item}-${issue}-${status}`;
+          if (!seenItems.has(key)) {
+            results.push({
+              moduleName: 'Клавиатурная навигация',
+              item,
+              issue,
+              status,
+            });
+            seenItems.add(key);
+          }
+        };
+
         const isHidden = (el: HTMLElement): boolean => {
           const style = window.getComputedStyle(el);
-          return style.display === 'none' || style.visibility === 'hidden' || style.opacity === '0';
+          return (
+            style.display === 'none' ||
+            style.visibility === 'hidden' ||
+            style.opacity === '0'
+          );
         };
 
         const isNaturallyFocusable = (el: HTMLElement): boolean => {
@@ -53,10 +68,9 @@ export const checkKeyBoard = async (
           return tabindex !== null && Number(tabindex) > 0;
         };
 
-        const elements = Array.from(document.querySelectorAll(selectors.join(','))).slice(0, max) as HTMLElement[];
-
-        const results: ModuleCheckResult[] = [];
-        const seenItems = new Set<string>();
+        const elements = Array.from(
+          document.querySelectorAll(selectors.join(',')),
+        ).slice(0, max) as HTMLElement[];
 
         elements.forEach((el) => {
           const identifier =
@@ -65,84 +79,65 @@ export const checkKeyBoard = async (
             el.tagName.toLowerCase() ||
             'unknown element';
 
-          if (seenItems.has(identifier)) return;
-          seenItems.add(identifier);
-
           const style = window.getComputedStyle(el);
 
-          if (isHidden(el) && (isNaturallyFocusable(el) || hasFocusableTabIndex(el))) {
-            results.push({
-              moduleName: 'Клавиатурная навигация',
-              item: identifier,
-              issue: 'Элемент скрыт, но доступен для фокуса',
-              status: 'error',
-            });
+          if (
+            isHidden(el) &&
+            (isNaturallyFocusable(el) || hasFocusableTabIndex(el))
+          ) {
+            addResult(
+              identifier,
+              'Элемент скрыт, но доступен для фокуса',
+              'error',
+            );
           }
 
           if (!isNaturallyFocusable(el) && !hasFocusableTabIndex(el)) {
-            results.push({
-              moduleName: 'Клавиатурная навигация',
-              item: identifier,
-              issue: 'Элемент недоступен с клавиатуры',
-              status: 'error',
-            });
+            addResult(identifier, 'Элемент недоступен с клавиатуры', 'error');
           }
 
           if (hasPositiveTabIndex(el)) {
-            results.push({
-              moduleName: 'Клавиатурная навигация',
-              item: identifier,
-              issue: 'tabindex > 0 нарушает порядок фокуса',
-              status: 'warning',
-            });
+            addResult(
+              identifier,
+              'tabindex > 0 нарушает порядок фокуса',
+              'warning',
+            );
           }
 
           if (style.outlineStyle === 'none' || style.outlineWidth === '0px') {
-            results.push({
-              moduleName: 'Клавиатурная навигация',
-              item: identifier,
-              issue: 'Фокус не имеет видимого индикатора',
-              status: 'warning',
-            });
+            addResult(
+              identifier,
+              'Фокус не имеет видимого индикатора',
+              'warning',
+            );
           }
         });
+
+        if (results.length === 0) {
+          results.push({
+            moduleName: 'Клавиатурная навигация',
+            item: 'Все элементы',
+            issue: 'Ошибки не найдены',
+            status: 'success',
+          });
+        }
 
         return results;
       },
       INTERACTIVE_SELECTORS,
       maxElements,
+      totalElements,
     );
 
-    // // Если проверили не всех элементов
-    // if (totalElements > maxElements) {
-    //   elementsData.push({
-    //     moduleName: 'Клавиатурная навигация',
-    //     item: 'Общий результат',
-    //     issue: `Проверено только ${maxElements} из ${totalElements} элементов`,
-    //     status: 'warning',
-    //   });
-    // }
-
-    if (elementsData.length === 0) {
-      elementsData.push({
-        moduleName: 'Клавиатурная навигация',
-        item: 'Все элементы',
-        issue: 'Ошибки не найдены',
-        status: 'success',
-      });
-    }
-
-    return elementsData;
+    return results;
   } catch (error) {
     return [
       {
         moduleName: 'Клавиатурная навигация',
         item: 'Ошибка',
         issue: 'Не удалось выполнить проверку клавиатурной навигации',
-        status: 'error' as CheckStatus,
+        status: 'error',
       },
     ];
-  } finally {
-    await browser.close();
   }
 };

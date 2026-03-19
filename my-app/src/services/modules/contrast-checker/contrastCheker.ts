@@ -1,10 +1,6 @@
+import type { ModuleCheckResult, CheckStatus } from '../../../types/types.ts';
+import type { Page } from 'puppeteer';
 import { getContrastRatio, rgbToHex } from '../../../utils/contrast/contrast';
-import puppeteer from 'puppeteer';
-import type {
-  CheckStatus,
-  ModuleCheckResult,
-  CheckOptions,
-} from '../../../types/types.ts';
 
 const DEFAULT_MAX = 15;
 const HEAVY_PAGE_MAX = 10;
@@ -13,21 +9,10 @@ const MIN_CONTRAST_RATIO_NORMAL_TEXT = 4.5;
 const MIN_CONTRAST_RATIO_LARGE_TEXT = 3;
 
 export const checkContrast = async (
-  url: string,
-  options?: CheckOptions,
+  page: Page,
+  options?: { maxElements?: number },
 ): Promise<ModuleCheckResult[]> => {
-  const browser = await puppeteer.launch({
-    args: ['--no-sandbox', '--disable-setuid-sandbox'],
-  });
-
   try {
-    const page = await browser.newPage();
-
-    await page.goto(url, {
-      waitUntil: 'domcontentloaded',
-      timeout: 10000,
-    });
-
     const totalElements = await page.evaluate(
       () =>
         document.querySelectorAll('p, span, h1, h2, h3, h4, h5, h6, a, button')
@@ -45,7 +30,6 @@ export const checkContrast = async (
 
       return elements.map((el) => {
         const style = window.getComputedStyle(el);
-
         return {
           tag: el.tagName,
           id: el.id,
@@ -66,11 +50,9 @@ export const checkContrast = async (
         rgbToHex(el.textColor),
         rgbToHex(el.bgColor),
       );
-
       const fontSize = parseFloat(el.fontSize);
       const isLargeText =
         fontSize >= 18 || (fontSize >= 14 && el.fontWeight === 'bold');
-
       const required = isLargeText
         ? MIN_CONTRAST_RATIO_LARGE_TEXT
         : MIN_CONTRAST_RATIO_NORMAL_TEXT;
@@ -80,7 +62,6 @@ export const checkContrast = async (
           el.tag.toLowerCase() +
           (el.id ? `#${el.id}` : '') +
           (el.className ? `.${el.className}` : '');
-
         if (!seenItems.has(key)) {
           results.push({
             moduleName: 'Цветовая контрастность',
@@ -112,7 +93,7 @@ export const checkContrast = async (
     }
 
     return results;
-  } catch (error) {
+  } catch {
     return [
       {
         moduleName: 'Цветовая контрастность',
@@ -121,7 +102,5 @@ export const checkContrast = async (
         status: 'error' as CheckStatus,
       },
     ];
-  } finally {
-    await browser.close();
   }
 };
