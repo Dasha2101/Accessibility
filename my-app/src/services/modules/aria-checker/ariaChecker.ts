@@ -5,9 +5,6 @@ import type {
   CheckOptions,
 } from '../../../types/types';
 
-const DEFAULT_MAX = 40;
-const HEAVY_PAGE_MAX = 25;
-
 export const checkARIAAttributes = (
   $: CheerioAPI,
   options?: CheckOptions,
@@ -15,13 +12,6 @@ export const checkARIAAttributes = (
   const selector = 'a[href], button, input, select, textarea, [role]';
 
   const allElements = $(selector);
-  const totalElements = allElements.length;
-
-  const maxElements =
-    options?.maxElements ??
-    (totalElements > 1000 ? HEAVY_PAGE_MAX : DEFAULT_MAX);
-
-  const limitedElements = allElements.slice(0, maxElements);
   const results: ModuleCheckResult[] = [];
   const seenItems = new Set<string>();
 
@@ -47,7 +37,7 @@ export const checkARIAAttributes = (
     .get()
     .filter(Boolean);
 
-  limitedElements.each((_, el) => {
+  allElements.each((_, el) => {
     const $el = $(el);
     const tag = el.tagName.toLowerCase();
 

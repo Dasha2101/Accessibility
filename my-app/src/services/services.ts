@@ -11,7 +11,8 @@ import { checkStructure } from './modules/structure-checker/structureChecker';
 import { checkScalability } from './modules/scalability-checker/scalabilityChecker';
 import { checkARIAAttributes } from './modules/aria-checker/ariaChecker';
 import { checkMedia } from './modules/media-checker/mediaChecker';
-import type { ModuleCheckResult } from '../types/types.ts';
+import type { ModuleCheckResult, CheckOptions } from '../types/types.ts';
+import { getPageLimits } from '../utils/limits/limits';
 
 let browser: Browser;
 
@@ -29,7 +30,7 @@ const safeGoto = async (page: Page, url: string) => {
   await Promise.race([
     page.goto(url, { waitUntil: 'domcontentloaded', timeout: 30000 }),
     new Promise((_, reject) =>
-      setTimeout(() => reject(new Error('Timeout page load')), 15000)
+      setTimeout(() => reject(new Error('Timeout page load')), 15000),
     ),
   ]);
 };
@@ -60,22 +61,26 @@ app.post('/api/check-all', async (req, res) => {
     const { data: html } = await axios.get(url, { timeout: 60000 });
     const $ = cheerio.load(html);
 
-    results.push(...checkAltAtributes($));
-    results.push(...checkARIAAttributes($));
-
     await safeGoto(currentPage, url);
+    const limits = await getPageLimits(currentPage);
+    const options: CheckOptions = { limits };
 
-    results.push(...(await checkContrast(currentPage)));
-    results.push(...(await checkKeyBoard(currentPage)));
-    results.push(...(await checkStructure(currentPage)));
-    results.push(...(await checkScalability(currentPage)));
-    results.push(...(await checkMedia(currentPage)));
+    results.push(...checkAltAtributes($, options));
+    results.push(...checkARIAAttributes($, options));
+    results.push(...(await checkContrast(currentPage, options)));
+    results.push(...(await checkKeyBoard(currentPage, options)));
+    results.push(...(await checkStructure(currentPage, options)));
+    results.push(...(await checkScalability(currentPage, options)));
+    await currentPage
+      .waitForSelector('video, audio', { timeout: 5000 })
+      .catch(() => {});
+    results.push(...(await checkMedia(currentPage, options)));
 
     res.json(results);
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Ошибка проверки страницы' });
-  } 
+  }
 });
 
 app.listen(3001, () => {

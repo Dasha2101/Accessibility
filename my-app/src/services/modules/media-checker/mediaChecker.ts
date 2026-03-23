@@ -5,9 +5,6 @@ import type {
   CheckOptions,
 } from '../../../types/types';
 
-const DEFAULT_MAX = 50;
-const HEAVY_PAGE_MAX = 20;
-
 export const checkMedia = async (
   page: Page,
   options?: CheckOptions,
@@ -17,7 +14,6 @@ export const checkMedia = async (
       const mediaCount =
         document.querySelectorAll('video').length +
         document.querySelectorAll('audio').length;
-
       const visibleElements = Array.from(
         document.body.querySelectorAll<HTMLElement>('body *'),
       ).filter((el) => el.offsetParent !== null).length;
@@ -25,12 +21,8 @@ export const checkMedia = async (
       return { mediaCount, visibleElements };
     });
 
-    const maxElements =
-      options?.maxElements ??
-      (totalData.visibleElements > 1000 ? HEAVY_PAGE_MAX : DEFAULT_MAX);
-
     const results: ModuleCheckResult[] = await page.evaluate(
-      (max: number, totalMedia: number) => {
+      (totalMedia: number) => {
         const results: ModuleCheckResult[] = [];
         const seenItems = new Set<string>();
 
@@ -53,11 +45,11 @@ export const checkMedia = async (
 
         const videos = Array.from(
           document.querySelectorAll<HTMLVideoElement>('video'),
-        ).slice(0, max);
+        );
 
         const audios = Array.from(
           document.querySelectorAll<HTMLAudioElement>('audio'),
-        ).slice(0, max);
+        );
 
         videos.forEach((video) => {
           const tracks = video.querySelectorAll(
@@ -98,7 +90,6 @@ export const checkMedia = async (
 
         return results;
       },
-      maxElements,
       totalData.mediaCount,
     );
 

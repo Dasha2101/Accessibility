@@ -6,24 +6,13 @@ import type {
 } from '../../../types/types';
 import { INTERACTIVE_SELECTORS } from '../../../utils/keyboard/keyboard';
 
-const DEFAULT_MAX = 20;
-const HEAVY_PAGE_MAX = 10;
-
 export const checkKeyBoard = async (
   page: Page,
   options?: CheckOptions,
 ): Promise<ModuleCheckResult[]> => {
   try {
-    const totalElements = await page.evaluate((selectors: string[]) => {
-      return document.querySelectorAll(selectors.join(',')).length;
-    }, INTERACTIVE_SELECTORS);
-
-    const maxElements =
-      options?.maxElements ??
-      (totalElements > 1000 ? HEAVY_PAGE_MAX : DEFAULT_MAX);
-
     const results: ModuleCheckResult[] = await page.evaluate(
-      (selectors: string[], max: number, total: number) => {
+      (selectors: string[]) => {
         const results: ModuleCheckResult[] = [];
         const seenItems = new Set<string>();
 
@@ -70,7 +59,7 @@ export const checkKeyBoard = async (
 
         const elements = Array.from(
           document.querySelectorAll(selectors.join(',')),
-        ).slice(0, max) as HTMLElement[];
+        ) as HTMLElement[];
 
         elements.forEach((el) => {
           const identifier =
@@ -125,8 +114,6 @@ export const checkKeyBoard = async (
         return results;
       },
       INTERACTIVE_SELECTORS,
-      maxElements,
-      totalElements,
     );
 
     return results;

@@ -9,6 +9,17 @@ export interface ModuleCheckResult {
   wcagLvl?: WcagLevel;
 }
 
+export type Limits = {
+  contrast: number;
+  keyboard: number;
+  structure: number;
+  scalability: number;
+  media: number;
+  alt?: number;
+  aria?: number;
+};
+
 export type CheckOptions = {
   maxElements?: number;
+  limits?: Limits;
 };

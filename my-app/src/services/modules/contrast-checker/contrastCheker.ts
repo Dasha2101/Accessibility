@@ -2,9 +2,6 @@ import type { ModuleCheckResult, CheckStatus } from '../../../types/types.ts';
 import type { Page } from 'puppeteer';
 import { getContrastRatio, rgbToHex } from '../../../utils/contrast/contrast';
 
-const DEFAULT_MAX = 15;
-const HEAVY_PAGE_MAX = 10;
-
 const MIN_CONTRAST_RATIO_NORMAL_TEXT = 4.5;
 const MIN_CONTRAST_RATIO_LARGE_TEXT = 3;
 
@@ -13,20 +10,10 @@ export const checkContrast = async (
   options?: { maxElements?: number },
 ): Promise<ModuleCheckResult[]> => {
   try {
-    const totalElements = await page.evaluate(
-      () =>
-        document.querySelectorAll('p, span, h1, h2, h3, h4, h5, h6, a, button')
-          .length,
-    );
-
-    const maxElements =
-      options?.maxElements ??
-      (totalElements > 1000 ? HEAVY_PAGE_MAX : DEFAULT_MAX);
-
-    const elementsData = await page.evaluate((max) => {
+    const elementsData = await page.evaluate(() => {
       const elements = Array.from(
         document.querySelectorAll('p, span, h1, h2, h3, h4, h5, h6, a, button'),
-      ).slice(0, max) as HTMLElement[];
+      ) as HTMLElement[];
 
       return elements.map((el) => {
         const style = window.getComputedStyle(el);
@@ -40,7 +27,7 @@ export const checkContrast = async (
           fontWeight: style.fontWeight,
         };
       });
-    }, maxElements);
+    });
 
     const results: ModuleCheckResult[] = [];
     const seenItems = new Set<string>();
@@ -73,15 +60,6 @@ export const checkContrast = async (
         }
       }
     });
-
-    if (totalElements > maxElements) {
-      results.push({
-        moduleName: 'Цветовая контрастность',
-        item: 'Общий результат',
-        issue: `Проверено только ${maxElements} из ${totalElements} элементов`,
-        status: 'warning' as CheckStatus,
-      });
-    }
 
     if (results.length === 0) {
       results.push({

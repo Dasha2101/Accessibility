@@ -5,9 +5,6 @@ import type {
   CheckOptions,
 } from '../../../types/types';
 
-const DEFAULT_MAX = 50;
-const HEAVY_PAGE_MAX = 30;
-
 const GENERIC_ALT_VALUES = ['image', 'photo', 'picture', 'img'];
 
 export const checkAltAtributes = (
@@ -15,16 +12,9 @@ export const checkAltAtributes = (
   options?: CheckOptions,
 ): ModuleCheckResult[] => {
   const allImages = $('img');
-  const totalImages = allImages.length;
-
-  const maxElements =
-    options?.maxElements ?? (totalImages > 1000 ? HEAVY_PAGE_MAX : DEFAULT_MAX);
-
-  const limitedImages = allImages.slice(0, maxElements);
-
   const results: ModuleCheckResult[] = [];
 
-  limitedImages.each((_, img) => {
+  allImages.each((_, img) => {
     const alt = $(img).attr('alt');
     const src = $(img).attr('src') ?? 'Не указан src';
 

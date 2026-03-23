@@ -5,9 +5,6 @@ import type {
   CheckOptions,
 } from '../../../types/types';
 
-const DEFAULT_MAX = 50;
-const HEAVY_PAGE_MAX = 20;
-
 export const checkStructure = async (
   page: Page,
   options?: CheckOptions,
@@ -16,12 +13,7 @@ export const checkStructure = async (
     const totalElements = await page.evaluate(
       () => document.body.querySelectorAll('*').length,
     );
-
-    const maxElements =
-      options?.maxElements ??
-      (totalElements > 2000 ? HEAVY_PAGE_MAX : DEFAULT_MAX);
-
-    const results: ModuleCheckResult[] = await page.evaluate((max: number) => {
+    const results: ModuleCheckResult[] = await page.evaluate(() => {
       const results: ModuleCheckResult[] = [];
       const seenItems = new Set<string>();
 
@@ -40,7 +32,7 @@ export const checkStructure = async (
 
       const elements = Array.from(
         document.body.querySelectorAll<HTMLElement>('body *'),
-      ).slice(0, max);
+      );
       const headers = elements.filter((el) => /^H[1-6]$/.test(el.tagName));
 
       let lastLevel = 0;
@@ -151,7 +143,7 @@ export const checkStructure = async (
       }
 
       return results;
-    }, maxElements);
+    });
 
     return results;
   } catch (error) {

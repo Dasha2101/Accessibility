@@ -21,7 +21,7 @@ export const safeGoto = async (page: Page, url: string) => {
   await Promise.race([
     page.goto(url, { waitUntil: 'domcontentloaded', timeout: 30000 }),
     new Promise((_, reject) =>
-      setTimeout(() => reject(new Error('Timeout page load')), 15000)
+      setTimeout(() => reject(new Error('Timeout page load')), 15000),
     ),
   ]);
 };

@@ -6,10 +6,6 @@ import type {
 } from '../../../types/types';
 
 export const SCALE_FACTORS = [1.5, 2];
-
-const DEFAULT_MAX = 20;
-const HEAVY_PAGE_MAX = 10;
-
 export const checkScalability = async (
   page: Page,
   options?: CheckOptions,
@@ -20,13 +16,8 @@ export const checkScalability = async (
         document.body.querySelectorAll<HTMLElement>('body *'),
       ).filter((el) => el.offsetParent !== null).length;
     });
-
-    const maxElements =
-      options?.maxElements ??
-      (totalElements > 1000 ? HEAVY_PAGE_MAX : DEFAULT_MAX);
-
     const results: ModuleCheckResult[] = await page.evaluate(
-      (scaleFactors: number[], max: number, total: number) => {
+      (scaleFactors: number[]) => {
         const results: ModuleCheckResult[] = [];
         const seenItems = new Set<string>();
 
@@ -49,9 +40,7 @@ export const checkScalability = async (
 
         const elements = Array.from(
           document.body.querySelectorAll<HTMLElement>('body *'),
-        )
-          .filter((el) => el.offsetParent !== null)
-          .slice(0, max);
+        ).filter((el) => el.offsetParent !== null);
 
         scaleFactors.forEach((scale) => {
           elements.forEach((el) => {
@@ -91,7 +80,6 @@ export const checkScalability = async (
         return results;
       },
       SCALE_FACTORS,
-      maxElements,
       totalElements,
     );
 
