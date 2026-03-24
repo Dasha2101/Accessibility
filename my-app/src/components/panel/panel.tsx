@@ -44,10 +44,8 @@ const Panel: React.FC<PanelProps> = ({ results }) => {
     const doc = new jsPDF();
 
     doc.addFileToVFS('Roboto-Regular.ttf', robotoTTF);
-    doc.addFont('Roboto-Regular.ttf', 'Roboto', 'normal');
+    doc.addFont('Roboto-Regular.ttf', 'Roboto', 'normal', 'Identity-H');
     doc.setFont('Roboto');
-    doc.setFontSize(16);
-    doc.text('Accessibility Report', 14, 20);
 
     const tableRows = results.map((r) => [r.moduleName, r.status, r.issue]);
 
@@ -55,7 +53,11 @@ const Panel: React.FC<PanelProps> = ({ results }) => {
       head: [['Module', 'Status', 'Issue']],
       body: tableRows,
       startY: 30,
-      styles: { fontSize: 10 },
+      styles: {
+        font: 'Roboto',
+        fontStyle: 'normal',
+        fontSize: 10,
+      },
       headStyles: { fillColor: [52, 73, 94], textColor: 255, font: 'Roboto' },
     });
 
