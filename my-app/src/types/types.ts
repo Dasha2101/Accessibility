@@ -23,3 +23,8 @@ export type CheckOptions = {
   maxElements?: number;
   limits?: Limits;
 };
+
+export type FiltersState = {
+  module: string;
+  status: 'all' | 'error' | 'warning' | 'success';
+};
