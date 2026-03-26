@@ -11,17 +11,15 @@ const RESULTS_PER_PAGE = 10;
 const ResultTable: React.FC<ResultTableProps> = ({ results }) => {
   const [currentPage, setCurrentPage] = React.useState(1);
 
-   useEffect(() => {
+  useEffect(() => {
     setCurrentPage(1);
   }, [results]);
-
 
   const totalPages = Math.ceil(results.length / RESULTS_PER_PAGE);
   const currentResults = results.slice(
     (currentPage - 1) * RESULTS_PER_PAGE,
-    currentPage * RESULTS_PER_PAGE
+    currentPage * RESULTS_PER_PAGE,
   );
-
 
   return (
     <div className="result-table-wrapper">
@@ -45,7 +43,7 @@ const ResultTable: React.FC<ResultTableProps> = ({ results }) => {
           ))}
         </tbody>
       </table>
- {totalPages > 1 && (
+      {totalPages > 1 && (
         <div className="pagination">
           <button
             onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}

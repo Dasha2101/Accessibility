@@ -6,6 +6,7 @@ import type { ModuleCheckResult, FiltersState } from '../../types/types';
 import Filters from '../../components/filter/filter';
 import LoadingIndicator from '../../components/loading/loading';
 import HeaderElem from '../../components/header/header';
+import FooterElem from '../../components/footer/footer';
 import './mainPage.css';
 
 const MainPage: React.FC = () => {
@@ -25,7 +26,7 @@ const MainPage: React.FC = () => {
     }
 
     setError('');
-    setLoading(true)
+    setLoading(true);
 
     try {
       const response = await fetch('http://213.171.3.128:3001/api/check-all', {
@@ -60,20 +61,21 @@ const MainPage: React.FC = () => {
   return (
     <>
       <HeaderElem />
-        <main className="page">
-          <h1 className="page-title">
-            Демонстрационная страница проверки доступности
-          </h1>
-          <UrlInput url={url} setUrl={setUrl} />
-          <button onClick={handleCheckAll} disabled={loading}>
-            {loading ? <LoadingIndicator /> : 'Проверить'}
-          </button>
-          {error && <p style={{ color: 'red' }}>{error}</p>}
+      <main className="page">
+        <h1 className="page-title">
+          Демонстрационная страница проверки доступности
+        </h1>
+        <UrlInput url={url} setUrl={setUrl} />
+        <button onClick={handleCheckAll} disabled={loading}>
+          {loading ? <LoadingIndicator /> : 'Проверить'}
+        </button>
+        {error && <p style={{ color: 'red' }}>{error}</p>}
 
-          <Filters results={results} filters={filters} setFilters={setFilters} />
-          <ResultTable results={filteredResults} />
-          <Panel results={filteredResults} />
-        </main>
+        <Filters results={results} filters={filters} setFilters={setFilters} />
+        <ResultTable results={filteredResults} />
+        <Panel results={filteredResults} />
+      </main>
+      <FooterElem />
     </>
   );
 };
