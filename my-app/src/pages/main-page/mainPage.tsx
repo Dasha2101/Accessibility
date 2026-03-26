@@ -5,6 +5,7 @@ import Panel from '../../components/panel/panel';
 import type { ModuleCheckResult, FiltersState } from '../../types/types';
 import Filters from '../../components/filter/filter';
 import LoadingIndicator from '../../components/loading/loading';
+import HeaderElem from '../../components/header/header';
 import './mainPage.css';
 
 const MainPage: React.FC = () => {
@@ -57,20 +58,23 @@ const MainPage: React.FC = () => {
   });
 
   return (
-    <main className="page">
-      <h1 className="page-title">
-        Демонстрационная страница проверки доступности
-      </h1>
-      <UrlInput url={url} setUrl={setUrl} />
-      <button onClick={handleCheckAll} disabled={loading}>
-         {loading ? <LoadingIndicator /> : 'Проверить'}
-      </button>
-      {error && <p style={{ color: 'red' }}>{error}</p>}
+    <>
+      <HeaderElem />
+        <main className="page">
+          <h1 className="page-title">
+            Демонстрационная страница проверки доступности
+          </h1>
+          <UrlInput url={url} setUrl={setUrl} />
+          <button onClick={handleCheckAll} disabled={loading}>
+            {loading ? <LoadingIndicator /> : 'Проверить'}
+          </button>
+          {error && <p style={{ color: 'red' }}>{error}</p>}
 
-      <Filters results={results} filters={filters} setFilters={setFilters} />
-      <ResultTable results={filteredResults} />
-      <Panel results={filteredResults} />
-    </main>
+          <Filters results={results} filters={filters} setFilters={setFilters} />
+          <ResultTable results={filteredResults} />
+          <Panel results={filteredResults} />
+        </main>
+    </>
   );
 };
 

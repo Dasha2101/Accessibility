@@ -15,19 +15,16 @@ body {
     Roboto, Helvetica, Arial, sans-serif;
   line-height: 1.6;
   background-color: #0f172a;
-  color: #e5e7eb;
+  /* color: #e5e7eb; */
 }
 
 :root {
-  --color-bg: #0f172a;
-  --color-text: #e5e7eb;
-  --color-card: #ffffff;
-  --color-accent: #6366f1;
-  --color-accent-soft: #22d3ee;
-  --color-border: #e5e7eb;
-  --radius-sm: 8px;
-  --radius-md: 12px;
-  --radius-lg: 20px;
+  --bg: #fff1ef;    
+  --text: #5a3e36;  
+  --muted: #a67c73; 
+  --primary: #f7c6b8; 
+  --border: #f7d8d2;   
+  --card: #fff7f3;    
 }
 
 h1,
