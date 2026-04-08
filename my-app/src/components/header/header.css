@@ -33,12 +33,11 @@
   gap: 10px;
 
   font-size: 14px;
-  color: var(--muted);
 }
 
 .header-nav a {
   text-decoration: none;
-  color: inherit;
+  color: var(--link);
   transition: 0.2s ease;
 }
 

@@ -5,8 +5,7 @@ import Panel from '../../components/panel/panel';
 import type { ModuleCheckResult, FiltersState } from '../../types/types';
 import Filters from '../../components/filter/filter';
 import LoadingIndicator from '../../components/loading/loading';
-import HeaderElem from '../../components/header/header';
-import FooterElem from '../../components/footer/footer';
+import Layout from '../../components/layout/layout';
 import './mainPage.css';
 
 const MainPage: React.FC = () => {
@@ -52,31 +51,25 @@ const MainPage: React.FC = () => {
   const filteredResults = results.filter((r) => {
     const matchModule =
       filters.module === 'all' || r.moduleName === filters.module;
-
     const matchStatus = filters.status === 'all' || r.status === filters.status;
-
     return matchModule && matchStatus;
   });
 
   return (
-    <>
-      <HeaderElem />
-      <main className="page">
-        <h1 className="page-title">
-          Демонстрационная страница проверки доступности
-        </h1>
-        <UrlInput url={url} setUrl={setUrl} />
-        <button onClick={handleCheckAll} disabled={loading}>
-          {loading ? <LoadingIndicator /> : 'Проверить'}
-        </button>
-        {error && <p style={{ color: 'red' }}>{error}</p>}
+    <Layout>
+      <h1 className="page-title">
+        Демонстрационная страница проверки доступности
+      </h1>
+      <UrlInput url={url} setUrl={setUrl} />
+      <button onClick={handleCheckAll} disabled={loading}>
+        {loading ? <LoadingIndicator /> : 'Проверить'}
+      </button>
+      {error && <p style={{ color: 'red' }}>{error}</p>}
 
-        <Filters results={results} filters={filters} setFilters={setFilters} />
-        <ResultTable results={filteredResults} />
-        <Panel results={filteredResults} />
-      </main>
-      <FooterElem />
-    </>
+      <Filters results={results} filters={filters} setFilters={setFilters} />
+      <ResultTable results={filteredResults} />
+      <Panel results={filteredResults} />
+    </Layout>
   );
 };
 
