@@ -57,9 +57,19 @@ const MainPage: React.FC = () => {
 
   return (
     <Layout>
-      <h1 className="page-title">
-        Демонстрационная страница проверки доступности
-      </h1>
+      <section className="hero">
+        <img
+          className="hero-image"
+          src="../../assets/1.svg"
+          alt="Иллюстрация проверки веб-доступности"
+        />
+        <section className='block'>
+          <h1 className="page-title">Проверка доступности веб-ресурсов</h1>
+          <p className="page-subtitle">
+            Анализируйте веб-страницы на соответствие стандартам доступности WCAG
+          </p>
+        </section>
+      </section>
       <UrlInput url={url} setUrl={setUrl} />
       <button onClick={handleCheckAll} disabled={loading}>
         {loading ? <LoadingIndicator /> : 'Проверить'}
