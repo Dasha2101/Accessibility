@@ -36,13 +36,15 @@
 }
 
 .header-nav a {
-  text-decoration: none;
   color: var(--link);
+  padding: 4px 6px;
+  border-radius: 6px;
   transition: 0.2s ease;
 }
 
 .header-nav a:hover {
-  color: var(--primary);
+  background: var(--primary-soft);
+  color: var(--link);
 }
 
 .dot {

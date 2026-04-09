@@ -1,21 +1,84 @@
-/* .loading-wrapper {
-  display: flex;
+.loading-wrapper {
+  display: inline-flex;
   align-items: center;
-  gap: 10px;
-  font-weight: bold;
-  color: #333;
+  justify-content: center;
+  gap: 12px;
+  
+  font-size: var(--fs-sm);
+  color: var(--primary);
+  font-weight: 500;
 }
 
 .spinner {
-  width: 20px;
-  height: 20px;
-  border: 3px solid #ccc;
-  border-top: 3px solid #007bff;
-  border-radius: 50%;
-  animation: spin 0.8s linear infinite;
+  width: 24px;
+  height: 24px;
+  position: relative;
+  animation: flowerBloom 1.2s ease-in-out infinite;
 }
 
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-} */
+.spinner::before,
+.spinner::after {
+  content: '';
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: radial-gradient(circle, var(--primary) 0%, var(--primary-soft) 100%);
+}
+
+.spinner::before {
+  animation: petal1 1.2s ease-in-out infinite;
+  transform-origin: center;
+}
+
+.spinner::after {
+  animation: petal2 1.2s ease-in-out infinite;
+  transform-origin: center;
+}
+
+.spinner {
+  background: white;
+  border-radius: 50%;
+  box-shadow: inset 0 0 0 2px var(--primary-soft);
+}
+
+.spinner::before {
+  transform: scale(0.6);
+  opacity: 0.8;
+}
+
+.spinner::after {
+  transform: scale(0.3);
+  opacity: 0.6;
+}
+
+@keyframes flowerBloom {
+  0%, 100% {
+    transform: scale(0.8) rotate(0deg);
+  }
+  50% {
+    transform: scale(1.1) rotate(180deg);
+  }
+}
+
+@keyframes petal1 {
+  0%, 100% {
+    transform: scale(0.6) translateX(-8px);
+    opacity: 0.8;
+  }
+  50% {
+    transform: scale(0.8) translateX(0px);
+    opacity: 1;
+  }
+}
+
+@keyframes petal2 {
+  0%, 100% {
+    transform: scale(0.3) translateX(8px);
+    opacity: 0.6;
+  }
+  50% {
+    transform: scale(0.5) translateX(0px);
+    opacity: 0.9;
+  }
+}

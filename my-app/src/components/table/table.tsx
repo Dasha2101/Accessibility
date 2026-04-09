@@ -21,6 +21,17 @@ const ResultTable: React.FC<ResultTableProps> = ({ results }) => {
     currentPage * RESULTS_PER_PAGE,
   );
 
+  if (results.length === 0) {
+    return (
+      <div className="result-table-wrapper-empty">
+        <div className="empty-state">
+          <p>Нет данных для отображения</p>
+          <p className="empty-state-sub">Введите URL и нажмите "Проверить"</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="result-table-wrapper">
       <table className="result-table">

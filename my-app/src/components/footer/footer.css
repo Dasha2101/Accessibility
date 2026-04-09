@@ -1,97 +1,204 @@
-/* :root {
-  --footer-bg: #cbb7b3;      
-  --footer-text: #5a3e36;     
-  --footer-muted: #a67c73;    
-  --footer-accent: #bc725e;   
-  --icon-bg: #f7d8d2;
-}
-
 .footer {
+  background: linear-gradient(135deg, #f8fafd 0%, #f0f5fa 100%);
+  border-top: 2px solid var(--primary-soft);
+  padding: var(--space-6) var(--space-5) var(--space-4);
+  margin-top: auto;
   display: flex;
-  justify-content: space-around;
-  align-items: flex-start;
-  padding: 45px;
-  background: var(--footer-bg);
-  border-top: 1px solid var(--icon-bg);
-  gap: 40px;
-  border-radius: 35px;
-  margin: 20px;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--space-6);
 }
 
 .footer-left {
-  max-width: 400px;
+  flex: 1;
+  min-width: 250px;
+  margin: 0 100px;
 }
 
 .footer-slogan {
-  font-size: 30px;
-  color: var(--footer-text);
-
+  font-size: var(--fs-lg);
+  font-weight: 500;
+  color: var(--text);
+  margin: 0 0 var(--space-4) 0;
+  line-height: 1.4;
   display: flex;
   flex-direction: column;
 }
 
 .footer-slogan-highlight {
-  color: var(--footer-accent);
-  font-weight: 600;
+  color: var(--primary);
+  font-weight: 700;
+  position: relative;
+  display: inline-block;
+}
+
+.footer-slogan-highlight::after {
+  position: absolute;
+  right: -24px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 18px;
+  opacity: 0.6;
 }
 
 .footer-contacts {
   display: flex;
-  flex-direction: row;
-  gap: 16px;
-  margin-top: 16px;
+  gap: var(--space-3);
+  margin-top: var(--space-4);
 }
 
 .contact-item {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 14px;
-  color: var(--footer-muted);
+  transition: all 0.3s ease;
 }
 
-
-
-.icon-circle {
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  background: var(--icon-bg);
-  display: flex;
-  align-items: center;
-  justify-content: center;
+.contact-item:hover {
+  transform: translateY(-3px);
 }
 
-.icon-circle img {
-  width: 16px;
-  height: 16px;
+.contact-item svg {
+  transition: all 0.3s ease;
+}
+
+.contact-item:hover svg {
+  background-color: var(--primary-soft) !important;
+  border-color: var(--primary) !important;
+  transform: scale(1.05);
 }
 
 .footer-right {
-  display: flex;
-  flex-direction: column;
-  gap: 25px;
+  flex: 1;
+  min-width: 250px;
 }
 
 .footer-right h4 {
-  font-size: 20px;
-  color: var(--footer-text);
+  font-size: var(--fs-md);
+  font-weight: 700;
+  color: var(--text);
+  margin: 0 0 var(--space-3) 0;
+  position: relative;
+  display: inline-block;
+}
+
+.footer-right h4::after {
+  content: '';
+  position: absolute;
+  bottom: -6px;
+  left: 0;
+  width: 40px;
+  height: 2px;
+  background: var(--primary);
+  border-radius: 2px;
 }
 
 .footer-right ul {
   list-style: none;
   padding: 0;
   margin: 0;
-  color: var(--footer-muted);
-  font-size: 15px;
 }
 
-.footer-right li a {
-  color: var(--footer-accent);
+.footer-right li {
+  margin-bottom: var(--space-2);
+}
+
+.footer-right p {
+  margin: var(--space-2) 0;
+  font-size: var(--fs-sm);
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+.footer-right a {
+  color: var(--primary);
   text-decoration: none;
-  transition: 0.2s ease;
+  transition: all 0.2s ease;
+  position: relative;
 }
 
-.footer-right ul li a:hover {
-  text-decoration: underline;
-} */
+.footer-right a::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 0;
+  height: 1px;
+  background: var(--primary);
+  transition: width 0.2s ease;
+}
+
+.footer-right a:hover {
+  color: #4a95d0;
+}
+
+.footer-right a:hover::after {
+  width: 100%;
+}
+
+.footer {
+  position: relative;
+  overflow: hidden;
+}
+
+.footer::before {
+  content: '🌸';
+  position: absolute;
+  bottom: 10px;
+  right: 20px;
+  font-size: 50px;
+  opacity: 0.08;
+  pointer-events: none;
+}
+
+@media (max-width: 768px) {
+  .footer {
+    flex-direction: column;
+    padding: var(--space-4) var(--space-3);
+    gap: var(--space-4);
+    text-align: center;
+  }
+  
+  .footer-slogan {
+    font-size: var(--fs-md);
+    text-align: center;
+  }
+  
+  .footer-slogan-highlight::after {
+    display: none;
+  }
+  
+  .footer-contacts {
+    justify-content: center;
+  }
+  
+  .footer-right {
+    text-align: center;
+  }
+  
+  .footer-right h4::after {
+    left: 50%;
+    transform: translateX(-50%);
+  }
+  
+  .footer-right a::after {
+    display: none;
+  }
+  
+  .footer::before {
+    font-size: 40px;
+    opacity: 0.05;
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.footer {
+  animation: fadeInUp 0.5s ease-out;
+}

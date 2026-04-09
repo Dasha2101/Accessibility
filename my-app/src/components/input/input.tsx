@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useState } from 'react';
+import './input.css';
 
 interface UrlInputProps {
   url: string;
@@ -6,15 +7,19 @@ interface UrlInputProps {
 }
 
 const UrlInput: React.FC<UrlInputProps> = ({ url, setUrl }) => {
+  const [isFocused, setIsFocused] = useState(false);
   return (
-    <div style={{ marginBottom: '1rem' }}>
+    <div className={`url-input ${isFocused ? 'url-input--focused' : ''}`}>
       <input
+        className="url-input__field"
         type="text"
-        placeholder="Введите URL"
+        placeholder="Введите URL веб-страницы..."
         value={url}
         onChange={(e) => setUrl(e.target.value)}
-        style={{ width: '300px', marginRight: '0.5rem' }}
+        onFocus={() => setIsFocused(true)}
+        onBlur={() => setIsFocused(false)}
       />
+      <div className="url-input__decor" />
     </div>
   );
 };

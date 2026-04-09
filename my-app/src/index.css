@@ -33,10 +33,7 @@ body {
   --muted: #6b7a90;
 
   --border: #dbe7f3;
-}
-
-:root {
-  --link: #1878d2;
+  --link: #054a8b;
 }
 
 :root {
@@ -51,9 +48,7 @@ body {
   --lh-sm: 1.2;
   --lh-md: 1.5;
   --lh-lg: 1.7;
-}
 
-:root {
   --space-1: 4px;
   --space-2: 8px;
   --space-3: 12px;
@@ -63,16 +58,12 @@ body {
   --space-7: 40px;
   --space-8: 48px;
   --space-9: 64px;
-}
 
-:root {
   --radius-sm: 6px;
   --radius-md: 10px;
   --radius-lg: 16px;
   --radius-xl: 24px;
-}
 
-:root {
   --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.06);
   --shadow-md: 0 6px 16px rgba(0, 0, 0, 0.08);
   --shadow-lg: 0 12px 28px rgba(0, 0, 0, 0.12);

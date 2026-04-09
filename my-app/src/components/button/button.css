@@ -1,0 +1,48 @@
+.export-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  
+  padding: 14px 28px;
+  border-radius: var(--radius-lg);
+  
+  font-size: var(--fs-md);
+  font-weight: 600;
+  
+  color: var(--primary);
+  background: white;
+  
+  border: 2px solid var(--primary-soft);
+  cursor: pointer;
+  
+  transition: all 0.3s ease;
+  box-shadow: var(--shadow-sm);
+  
+  user-select: none;
+  white-space: nowrap;
+}
+
+.export-button:hover {
+  background: linear-gradient(135deg, #fff 0%, #f0f7ff 100%);
+  border-color: var(--primary);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+  color: #4a95d0;
+}
+
+.export-button:active {
+  transform: translateY(0);
+}
+
+.export-button:focus-visible {
+  outline: 3px solid var(--primary-soft);
+  outline-offset: 2px;
+}
+
+@media (max-width: 768px) {
+  .export-button {
+    padding: 12px 24px;
+    font-size: var(--fs-sm);
+  }
+}

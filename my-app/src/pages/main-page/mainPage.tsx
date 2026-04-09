@@ -6,6 +6,7 @@ import type { ModuleCheckResult, FiltersState } from '../../types/types';
 import Filters from '../../components/filter/filter';
 import LoadingIndicator from '../../components/loading/loading';
 import Layout from '../../components/layout/layout';
+import Button from '../../components/button/button';
 import './mainPage.css';
 
 const MainPage: React.FC = () => {
@@ -63,17 +64,21 @@ const MainPage: React.FC = () => {
           src="../../assets/1.svg"
           alt="Иллюстрация проверки веб-доступности"
         />
-        <section className='block'>
+        <section className="block">
           <h1 className="page-title">Проверка доступности веб-ресурсов</h1>
           <p className="page-subtitle">
-            Анализируйте веб-страницы на соответствие стандартам доступности WCAG
+            Анализируйте веб-страницы на соответствие стандартам доступности
+            WCAG
           </p>
         </section>
       </section>
-      <UrlInput url={url} setUrl={setUrl} />
-      <button onClick={handleCheckAll} disabled={loading}>
-        {loading ? <LoadingIndicator /> : 'Проверить'}
-      </button>
+      <div className="search-container">
+        <UrlInput url={url} setUrl={setUrl} />
+        <Button onClick={handleCheckAll} disabled={loading}>
+          {loading ? <LoadingIndicator /> : 'Проверить'}
+        </Button>
+      </div>
+
       {error && <p style={{ color: 'red' }}>{error}</p>}
 
       <Filters results={results} filters={filters} setFilters={setFilters} />

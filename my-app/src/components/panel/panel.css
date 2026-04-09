@@ -1,0 +1,83 @@
+/* panel.css */
+.export-panel {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--space-4);
+  margin: var(--space-5) 15px;
+  padding: var(--space-4) var(--space-5);
+  background: linear-gradient(135deg, #f8fafd 0%, #ffffff 100%);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-sm);
+}
+
+.export-panel p {
+  margin: 0;
+  font-size: var(--fs-sm);
+  color: var(--muted);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.export-panel p::before {
+  content: '💡';
+  font-size: 18px;
+}
+
+.button-group {
+  display: flex;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+}
+
+.export-panel .export-button {
+  padding: 8px 20px;
+  font-size: var(--fs-sm);
+  background: white;
+  color: var(--primary);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-sm);
+}
+
+.export-panel .export-button:hover {
+  background: var(--primary);
+  color: white;
+  border-color: var(--primary);
+  transform: translateY(-2px);
+}
+
+/* Иконки перед текстом кнопок */
+.export-panel .export-button:nth-child(2)::before {
+  content: '📄';
+  margin-right: 6px;
+}
+
+.export-panel .export-button:nth-child(3)::before {
+  content: '📊';
+  margin-right: 6px;
+}
+
+.export-panel .export-button:nth-child(4)::before {
+  content: '📑';
+  margin-right: 6px;
+}
+
+@media (max-width: 768px) {
+  .export-panel {
+    flex-direction: column;
+    align-items: stretch;
+    padding: var(--space-3);
+  }
+  
+  .export-panel p {
+    justify-content: center;
+    text-align: center;
+  }
+  
+  .button-group {
+    justify-content: center;
+  }
+}

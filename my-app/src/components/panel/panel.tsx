@@ -4,6 +4,7 @@ import type { ModuleCheckResult } from '../../types/types';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import robotoTTF from '../../fonts/RobotoBase64';
+import './panel.css';
 
 type PanelProps = {
   results: ModuleCheckResult[];
@@ -66,9 +67,12 @@ const Panel: React.FC<PanelProps> = ({ results }) => {
 
   return (
     <div className="export-panel">
-      <Button label="Export JSON" onClick={exportJSON} />
-      <Button label="Export CSV" onClick={exportCSV} />
-      <Button label="Export PDF" onClick={exportPDF} />
+      <p>Вы можете сохранить ваши результаты в удобном для вас формате</p>
+      <div className="button-group">
+        <Button children="Export JSON" onClick={exportJSON} />
+        <Button children="Export CSV" onClick={exportCSV} />
+        <Button children="Export PDF" onClick={exportPDF} />
+      </div>
     </div>
   );
 };
