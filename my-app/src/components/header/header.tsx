@@ -6,7 +6,7 @@ const HeaderElem: React.FC = () => {
     <header className="header">
       <div className="logo-container">
         <img
-          src="../../assets/logo.jpg"
+          src="/logo.jpg"
           alt="Accessly logo"
           className="logo-image"
         />

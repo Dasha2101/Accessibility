@@ -61,7 +61,7 @@ const MainPage: React.FC = () => {
       <section className="hero">
         <img
           className="hero-image"
-          src="../../assets/1.svg"
+          src="/1.svg"
           alt="Иллюстрация проверки веб-доступности"
         />
         <section className="block">

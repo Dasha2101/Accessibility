@@ -27,12 +27,10 @@ const initBrowser = async () => {
 };
 
 const safeGoto = async (page: Page, url: string) => {
-  await Promise.race([
-    page.goto(url, { waitUntil: 'domcontentloaded', timeout: 30000 }),
-    new Promise((_, reject) =>
-      setTimeout(() => reject(new Error('Timeout page load')), 15000),
-    ),
-  ]);
+  await page.goto(url, {
+    waitUntil: 'domcontentloaded',
+    timeout: 60000,
+  });
 };
 
 const app = express();
@@ -42,11 +40,14 @@ app.use(express.json());
 let currentPage: Page | null = null;
 
 app.post('/api/check-all', async (req, res) => {
+  console.log('🔥 REQUEST START');
   const { url } = req.body;
+  console.log('🌐 URL:', url);
   if (!url) return res.status(400).json({ error: 'URL не указан' });
 
   const results: ModuleCheckResult[] = [];
   await initBrowser();
+  console.log('🧠 browser ready');
   if (currentPage) {
     try {
       await currentPage.close();
@@ -56,21 +57,42 @@ app.post('/api/check-all', async (req, res) => {
   }
 
   currentPage = await browser.newPage();
+  console.log('📄 new page created')
 
   try {
     const { data: html } = await axios.get(url, { timeout: 60000 });
     const $ = cheerio.load(html);
+    console.log('🚀 before safeGoto');
 
     await safeGoto(currentPage, url);
+    console.log('✅ after safeGoto');
     const limits = await getPageLimits(currentPage);
     const options: CheckOptions = { limits };
 
-    results.push(...checkAltAtributes($, options));
-    results.push(...checkARIAAttributes($, options));
-    results.push(...(await checkContrast(currentPage, options)));
-    results.push(...(await checkKeyBoard(currentPage, options)));
-    results.push(...(await checkStructure(currentPage, options)));
-    results.push(...(await checkScalability(currentPage, options)));
+
+console.log('🧪 alt');
+results.push(...checkAltAtributes($, options));
+console.log('✅ alt done');
+
+console.log('🧪 aria');
+results.push(...checkARIAAttributes($, options));
+console.log('✅ aria done');
+
+console.log('🧪 contrast');
+results.push(...await checkContrast(currentPage, options));
+console.log('✅ contrast done');
+
+console.log('🧪 keyboard');
+results.push(...await checkKeyBoard(currentPage, options));
+console.log('✅ keyboard done');
+
+console.log('🧪 structure');
+results.push(...await checkStructure(currentPage, options));
+console.log('✅ structure done');
+
+console.log('🧪 scalability');
+results.push(...await checkScalability(currentPage, options));
+console.log('✅ scalability done');
     await currentPage
       .waitForSelector('video, audio', { timeout: 5000 })
       .catch(() => {});
