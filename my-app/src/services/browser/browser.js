@@ -1,22 +1,54 @@
 import puppeteer from 'puppeteer';
-let browser;
+let browser = null;
+let launching = null;
+let restarting = false;
+const MAX_PAGES = 5;
+let activePages = 0;
 export const initBrowser = async () => {
-    if (!browser) {
-        browser = await puppeteer.launch({
-            args: ['--no-sandbox', '--disable-setuid-sandbox'],
+  if (browser) return browser;
+  if (launching) return launching;
+  launching = puppeteer.launch({
+    args: ['--no-sandbox', '--disable-setuid-sandbox'],
+  });
+  browser = await launching;
+  launching = null;
+  browser.on('disconnected', () => {
+    if (restarting) return;
+    restarting = true;
+    browser = null;
+    setTimeout(() => {
+      initBrowser()
+        .catch((err) => console.error('Failed to restart browser:', err))
+        .finally(() => {
+          restarting = false;
         });
-    }
-    return browser;
+    }, 2000);
+  });
+  return browser;
+};
+const decreasePages = () => {
+  activePages = Math.max(0, activePages - 1);
 };
 export const createPage = async () => {
-    if (!browser)
-        throw new Error('Браузер не запущен');
-    const page = await browser.newPage();
-    return page;
+  const instance = await initBrowser();
+  if (activePages >= MAX_PAGES) {
+    throw new Error('Too many active pages');
+  }
+  const page = await instance.newPage();
+  activePages++;
+  page.on('close', decreasePages);
+  page.on('error', decreasePages);
+  return page;
 };
 export const safeGoto = async (page, url) => {
-    await Promise.race([
-        page.goto(url, { waitUntil: 'domcontentloaded', timeout: 30000 }),
-        new Promise((_, reject) => setTimeout(() => reject(new Error('Timeout page load')), 15000)),
-    ]);
+  const navigationPromise = page.goto(url, {
+    waitUntil: 'domcontentloaded',
+    timeout: 30000,
+  });
+  const timeoutPromise = new Promise((_, reject) => {
+    setTimeout(() => {
+      reject(new Error('Page load timeout'));
+    }, 15000);
+  });
+  await Promise.race([navigationPromise, timeoutPromise]);
 };

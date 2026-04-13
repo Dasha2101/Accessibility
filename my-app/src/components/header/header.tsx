@@ -5,11 +5,7 @@ const HeaderElem: React.FC = () => {
   return (
     <header className="header">
       <div className="logo-container">
-        <img
-          src="/logo.jpg"
-          alt="Accessly logo"
-          className="logo-image"
-        />
+        <img src="/logo.jpg" alt="Accessly logo" className="logo-image" />
         <div className="title">Accessly</div>
       </div>
       <nav className="header-nav">
