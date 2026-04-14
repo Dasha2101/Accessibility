@@ -11,7 +11,7 @@ const HeaderElem: React.FC = () => {
       <nav className="header-nav">
         <a href="#about">About</a>
         <span className="dot">•</span>
-        <a href="#support">Support</a>
+        <a href="#footer">Support</a>
       </nav>
     </header>
   );
