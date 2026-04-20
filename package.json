@@ -4,12 +4,13 @@
   "version": "0.0.0",
   "scripts": {
     "dev": "vite",
-    "build": "tsc -b && vite build",
+    "build": "npm run build:server && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "server": "ts-node --loader ts-node/esm src/services/services.ts",
+    "server": "node dist/services/services.js",
     "format": "prettier --write \"src/**/*.{ts,tsx,js,jsx}\"",
-    "format:check": "prettier --check \"src/**/*.{ts,tsx,js,jsx}\""
+    "format:check": "prettier --check \"src/**/*.{ts,tsx,js,jsx}\"",
+    "build:server": "tsc -p tsconfig.server.json"
   },
   "dependencies": {
     "axios": "^1.13.6",

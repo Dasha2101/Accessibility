@@ -15,40 +15,42 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 app.post('/api/check-all', async (req, res) => {
-  const { url } = req.body;
-  if (!url) {
-    return res.status(400).json({ error: 'URL не указан' });
-  }
-  let page = null;
-  const results = [];
-  try {
-    await initBrowser();
-    page = await createPage();
-    const { data: html } = await axios.get(url, { timeout: 60000 });
-    const $ = cheerio.load(html);
-    await safeGoto(page, url);
-    const limits = await getPageLimits(page);
-    const options = { limits };
-    results.push(...checkAltAtributes($, options));
-    results.push(...checkARIAAttributes($, options));
-    results.push(...(await checkContrast(page, options)));
-    results.push(...(await checkKeyBoard(page, options)));
-    results.push(...(await checkStructure(page, options)));
-    results.push(...(await checkScalability(page, options)));
-    await page
-      .waitForSelector('video, audio', { timeout: 5000 })
-      .catch(() => {});
-    results.push(...(await checkMedia(page, options)));
-    res.json(results);
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: 'Ошибка проверки страницы' });
-  } finally {
-    if (page) {
-      await page.close().catch(() => {});
+    const { url } = req.body;
+    if (!url) {
+        return res.status(400).json({ error: 'URL не указан' });
     }
-  }
+    let page = null;
+    const results = [];
+    try {
+        await initBrowser();
+        page = await createPage();
+        const { data: html } = await axios.get(url, { timeout: 60000 });
+        const $ = cheerio.load(html);
+        await safeGoto(page, url);
+        const limits = await getPageLimits(page);
+        const options = { limits };
+        results.push(...checkAltAtributes($, options));
+        results.push(...checkARIAAttributes($, options));
+        results.push(...(await checkContrast(page, options)));
+        results.push(...(await checkKeyBoard(page, options)));
+        results.push(...(await checkStructure(page, options)));
+        results.push(...(await checkScalability(page, options)));
+        await page
+            .waitForSelector('video, audio', { timeout: 5000 })
+            .catch(() => { });
+        results.push(...(await checkMedia(page, options)));
+        res.json(results);
+    }
+    catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Ошибка проверки страницы' });
+    }
+    finally {
+        if (page) {
+            await page.close().catch(() => { });
+        }
+    }
 });
 app.listen(3001, () => {
-  console.log('Сервер запущен на порту 3001');
+    console.log('Сервер запущен на порту 3001');
 });

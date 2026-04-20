@@ -1,3 +1,6 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.getContrastRatio = exports.rgbToHex = void 0;
 // Коэффициенты яркости цветовых каналов
 const RED_LUMINANCE_COEFFICIENT = 0.2126;
 const GREEN_LUMINANCE_COEFFICIENT = 0.7152;
@@ -12,40 +15,41 @@ const SRGB_EXPONENT = 2.4;
 const CONTRAST_OFFSET = 0.05;
 // Преобразование HEX в RGB
 const hexToRgb = (hex) => {
-  const cleaned = hex.replace('#', '');
-  const value = parseInt(cleaned, 16);
-  return {
-    r: (value >> 16) & 255,
-    g: (value >> 8) & 255,
-    b: value & 255,
-  };
+    const cleaned = hex.replace('#', '');
+    const value = parseInt(cleaned, 16);
+    return {
+        r: (value >> 16) & 255,
+        g: (value >> 8) & 255,
+        b: value & 255,
+    };
 };
-export const rgbToHex = (rgb) => {
-  const match = rgb.match(/\d+/g);
-  if (!match) return '#000000';
-  const [r, g, b] = match.map(Number);
-  return '#' + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
+const rgbToHex = (rgb) => {
+    const match = rgb.match(/\d+/g);
+    if (!match)
+        return '#000000';
+    const [r, g, b] = match.map(Number);
+    return '#' + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
 };
+exports.rgbToHex = rgbToHex;
 //  Преобразование sRGB канала в линейное значение
 const normalizeChannel = (value) => {
-  const normalized = value / 255;
-  return normalized <= SRGB_THRESHOLD
-    ? normalized / SRGB_DIVISOR
-    : Math.pow((normalized + SRGB_OFFSET) / SRGB_SCALE, SRGB_EXPONENT);
+    const normalized = value / 255;
+    return normalized <= SRGB_THRESHOLD
+        ? normalized / SRGB_DIVISOR
+        : Math.pow((normalized + SRGB_OFFSET) / SRGB_SCALE, SRGB_EXPONENT);
 };
 // Относительная яркость цвета
 const luminance = ({ r, g, b }) => {
-  return (
-    RED_LUMINANCE_COEFFICIENT * normalizeChannel(r) +
-    GREEN_LUMINANCE_COEFFICIENT * normalizeChannel(g) +
-    BLUE_LUMINANCE_COEFFICIENT * normalizeChannel(b)
-  );
+    return (RED_LUMINANCE_COEFFICIENT * normalizeChannel(r) +
+        GREEN_LUMINANCE_COEFFICIENT * normalizeChannel(g) +
+        BLUE_LUMINANCE_COEFFICIENT * normalizeChannel(b));
 };
 // Соотношение контраста между двумя цветами
-export const getContrastRatio = (color1, color2) => {
-  const lum1 = luminance(hexToRgb(color1));
-  const lum2 = luminance(hexToRgb(color2));
-  const brightest = Math.max(lum1, lum2);
-  const darkest = Math.min(lum1, lum2);
-  return (brightest + CONTRAST_OFFSET) / (darkest + CONTRAST_OFFSET);
+const getContrastRatio = (color1, color2) => {
+    const lum1 = luminance(hexToRgb(color1));
+    const lum2 = luminance(hexToRgb(color2));
+    const brightest = Math.max(lum1, lum2);
+    const darkest = Math.min(lum1, lum2);
+    return (brightest + CONTRAST_OFFSET) / (darkest + CONTRAST_OFFSET);
 };
+exports.getContrastRatio = getContrastRatio;
