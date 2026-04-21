@@ -2,6 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import axios from 'axios';
 import * as cheerio from 'cheerio';
+export { app };
 
 import { initBrowser, createPage, safeGoto } from './browser/browser';
 

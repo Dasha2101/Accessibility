@@ -86,13 +86,6 @@ export const checkMedia = async (
             issue: 'Ошибки не найдены',
             status: 'success',
           });
-        } else if (results.length === 0) {
-          results.push({
-            moduleName: 'Доступность мультимедиа',
-            item: 'Все элементы',
-            issue: 'Ошибки не найдены',
-            status: 'success',
-          });
         }
 
         return results;
