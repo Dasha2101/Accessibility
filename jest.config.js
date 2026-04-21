@@ -6,8 +6,8 @@ module.exports = {
       diagnostics: false, 
     }]
   },
-  moduleFileExtensions: ['ts', 'js', 'json'],
-  testMatch: ['**/*.test.ts'],
+  moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json'],
+  testMatch: ['**/*.test.ts', '**/*.test.tsx'],
   verbose: false,      
   cache: false,              
   maxWorkers: 1,               

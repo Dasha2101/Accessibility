@@ -22,7 +22,7 @@ describe('getPageLimits', () => {
     });
 
     const limits = await getPageLimits(mockPage as unknown as Page);
-    
+
     expect(limits).toEqual({
       contrast: 120,
       keyboard: 72,
@@ -42,7 +42,7 @@ describe('getPageLimits', () => {
     });
 
     const limits = await getPageLimits(mockPage as unknown as Page);
-    
+
     expect(limits.contrast).toBe(100);
     expect(limits.keyboard).toBe(60);
     expect(limits.structure).toBe(50);
@@ -59,7 +59,7 @@ describe('getPageLimits', () => {
     });
 
     const limits = await getPageLimits(mockPage as unknown as Page);
-    
+
     expect(limits.contrast).toBe(80);
     expect(limits.keyboard).toBe(48);
     expect(limits.structure).toBe(40);
@@ -76,7 +76,7 @@ describe('getPageLimits', () => {
     });
 
     const limits = await getPageLimits(mockPage as unknown as Page);
-    
+
     expect(limits.contrast).toBe(60);
     expect(limits.keyboard).toBe(36);
     expect(limits.structure).toBe(30);

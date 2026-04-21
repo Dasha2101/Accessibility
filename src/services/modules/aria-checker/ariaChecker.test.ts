@@ -5,7 +5,7 @@ describe('checkARIAAttributes', () => {
   it('должен вернуть error если у элемента с role нет текста', () => {
     const $ = load('<div role="button"></div>');
     const results = checkARIAAttributes($);
-    
+
     expect(results[0]).toEqual({
       moduleName: 'ARIA атрибуты',
       item: 'div',
@@ -16,7 +16,7 @@ describe('checkARIAAttributes', () => {
   it('должен вернуть error если нет aria-label и видимого текста', () => {
     const $ = load('<button></button>');
     const results = checkARIAAttributes($);
-    
+
     expect(results[0]).toEqual({
       moduleName: 'ARIA атрибуты',
       item: 'button',
@@ -31,7 +31,7 @@ describe('checkARIAAttributes', () => {
       <button aria-label="Закрыть">Close</button>
     `);
     const results = checkARIAAttributes($);
-    
+
     expect(results[0]).toEqual({
       moduleName: 'ARIA атрибуты',
       item: 'Закрыть',

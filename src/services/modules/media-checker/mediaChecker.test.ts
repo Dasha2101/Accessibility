@@ -1,11 +1,11 @@
-import { checkMedia } from "./mediaChecker";
+import { checkMedia } from './mediaChecker';
 import type { ModuleCheckResult } from '../../../types/types';
 import type { Page } from 'puppeteer';
 
 describe('checkMedia', () => {
   const mockPage = {
     evaluate: jest.fn(),
-} as unknown as Page;
+  } as unknown as Page;
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -26,7 +26,7 @@ describe('checkMedia', () => {
       });
 
     const results = await checkMedia(mockPage);
-    
+
     expect(results[0].status).toBe('success');
     expect(results[0].issue).toBe('Ошибки не найдены');
   });
@@ -35,16 +35,18 @@ describe('checkMedia', () => {
     (mockPage.evaluate as jest.Mock)
       .mockResolvedValueOnce({ mediaCount: 1, visibleElements: 10 })
       .mockImplementationOnce(async (fn, totalMedia) => {
-        return [{
-          moduleName: 'Доступность мультимедиа',
-          item: 'video',
-          issue: 'Нет субтитров/закрытых титров',
-          status: 'warning',
-        }];
+        return [
+          {
+            moduleName: 'Доступность мультимедиа',
+            item: 'video',
+            issue: 'Нет субтитров/закрытых титров',
+            status: 'warning',
+          },
+        ];
       });
 
     const results = await checkMedia(mockPage);
-    
+
     expect(results[0].status).toBe('warning');
     expect(results[0].issue).toBe('Нет субтитров/закрытых титров');
   });
@@ -53,25 +55,29 @@ describe('checkMedia', () => {
     (mockPage.evaluate as jest.Mock)
       .mockResolvedValueOnce({ mediaCount: 1, visibleElements: 10 })
       .mockImplementationOnce(async (fn, totalMedia) => {
-        return [{
-          moduleName: 'Доступность мультимедиа',
-          item: 'audio',
-          issue: 'Нет транскрипта/описания аудио',
-          status: 'warning',
-        }];
+        return [
+          {
+            moduleName: 'Доступность мультимедиа',
+            item: 'audio',
+            issue: 'Нет транскрипта/описания аудио',
+            status: 'warning',
+          },
+        ];
       });
 
     const results = await checkMedia(mockPage);
-    
+
     expect(results[0].status).toBe('warning');
     expect(results[0].issue).toBe('Нет транскрипта/описания аудио');
   });
 
   it('должен вернуть error при ошибке выполнения', async () => {
-    (mockPage.evaluate as jest.Mock).mockRejectedValue(new Error('Puppeteer error'));
+    (mockPage.evaluate as jest.Mock).mockRejectedValue(
+      new Error('Puppeteer error'),
+    );
 
     const results = await checkMedia(mockPage);
-    
+
     expect(results[0]).toEqual({
       moduleName: 'Доступность мультимедиа',
       item: 'Ошибка',

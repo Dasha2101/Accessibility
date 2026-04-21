@@ -10,7 +10,6 @@ import { checkMedia } from './modules/media-checker/mediaChecker';
 import axios from 'axios';
 import * as cheerio from 'cheerio';
 
-
 jest.mock('./browser/browser');
 jest.mock('./modules/alt-checker/altChecker');
 jest.mock('./modules/aria-checker/ariaChecker');
@@ -36,13 +35,13 @@ describe('Server API', () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
-    
+
     (initBrowser as jest.Mock).mockResolvedValue(undefined);
     (createPage as jest.Mock).mockResolvedValue(mockPage);
     (safeGoto as jest.Mock).mockResolvedValue(undefined);
     (axios.get as jest.Mock).mockResolvedValue({ data: '<html></html>' });
     (cheerio.load as jest.Mock).mockReturnValue({});
-    
+
     (checkAltAtributes as jest.Mock).mockReturnValue([]);
     (checkARIAAttributes as jest.Mock).mockReturnValue([]);
     (checkContrast as jest.Mock).mockResolvedValue([]);
@@ -54,10 +53,8 @@ describe('Server API', () => {
 
   describe('POST /api/check-all', () => {
     it('должен вернуть ошибку если URL не указан', async () => {
-      const response = await request(app)
-        .post('/api/check-all')
-        .send({});
-      
+      const response = await request(app).post('/api/check-all').send({});
+
       expect(response.status).toBe(400);
       expect(response.body.error).toBe('URL не указан');
     });
@@ -66,9 +63,11 @@ describe('Server API', () => {
       const response = await request(app)
         .post('/api/check-all')
         .send({ url: 'https://example.com' });
-      
+
       expect(response.status).toBe(200);
-      expect(axios.get).toHaveBeenCalledWith('https://example.com', { timeout: 60000 });
+      expect(axios.get).toHaveBeenCalledWith('https://example.com', {
+        timeout: 60000,
+      });
       expect(initBrowser).toHaveBeenCalled();
       expect(createPage).toHaveBeenCalled();
       expect(safeGoto).toHaveBeenCalledWith(mockPage, 'https://example.com');
@@ -78,7 +77,7 @@ describe('Server API', () => {
       await request(app)
         .post('/api/check-all')
         .send({ url: 'https://example.com' });
-      
+
       expect(checkAltAtributes).toHaveBeenCalled();
       expect(checkARIAAttributes).toHaveBeenCalled();
       expect(checkContrast).toHaveBeenCalled();
@@ -90,11 +89,11 @@ describe('Server API', () => {
 
     it('должен вернуть ошибку 500 при проблеме', async () => {
       (axios.get as jest.Mock).mockRejectedValue(new Error('Network error'));
-      
+
       const response = await request(app)
         .post('/api/check-all')
         .send({ url: 'https://example.com' });
-      
+
       expect(response.status).toBe(500);
       expect(response.body.error).toBe('Ошибка проверки страницы');
     });
@@ -103,7 +102,7 @@ describe('Server API', () => {
       await request(app)
         .post('/api/check-all')
         .send({ url: 'https://example.com' });
-      
+
       expect(mockPage.close).toHaveBeenCalled();
     });
   });

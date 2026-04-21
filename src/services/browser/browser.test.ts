@@ -14,7 +14,7 @@ describe('Browser module', () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
-    
+
     mockPage = {
       goto: jest.fn(),
       on: jest.fn(),
@@ -25,9 +25,9 @@ describe('Browser module', () => {
   describe('safeGoto', () => {
     it('должен успешно перейти по URL', async () => {
       mockPage.goto.mockResolvedValue(undefined);
-      
+
       await safeGoto(mockPage as unknown as Page, 'https://example.com');
-      
+
       expect(mockPage.goto).toHaveBeenCalledWith('https://example.com', {
         waitUntil: 'domcontentloaded',
         timeout: 30000,
@@ -36,9 +36,12 @@ describe('Browser module', () => {
 
     it('должен выбросить ошибку при таймауте', async () => {
       mockPage.goto.mockImplementation(() => new Promise(() => {}));
-      
-      const promiseResult = safeGoto(mockPage as unknown as Page, 'https://example.com');
-      
+
+      const promiseResult = safeGoto(
+        mockPage as unknown as Page,
+        'https://example.com',
+      );
+
       await expect(promiseResult).rejects.toThrow('Page load timeout');
     }, 20000);
   });

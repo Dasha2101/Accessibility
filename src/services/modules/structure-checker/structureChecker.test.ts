@@ -1,5 +1,5 @@
 import { checkStructure } from './structureChecker';
-import type { ModuleCheckResult } from "../../../types/types";
+import type { ModuleCheckResult } from '../../../types/types';
 import type { Page } from 'puppeteer';
 
 describe('checkStructure', () => {
@@ -26,7 +26,7 @@ describe('checkStructure', () => {
       });
 
     const results = await checkStructure(mockPage);
-    
+
     expect(results[0].status).toBe('success');
   });
 
@@ -34,16 +34,18 @@ describe('checkStructure', () => {
     mockPage.evaluate
       .mockResolvedValueOnce(10)
       .mockImplementationOnce(async () => {
-        return [{
-          moduleName: 'Структура интерфейса',
-          item: 'h1',
-          issue: 'Заголовок пустой',
-          status: 'error',
-        }];
+        return [
+          {
+            moduleName: 'Структура интерфейса',
+            item: 'h1',
+            issue: 'Заголовок пустой',
+            status: 'error',
+          },
+        ];
       });
 
     const results = await checkStructure(mockPage);
-    
+
     expect(results[0].status).toBe('error');
     expect(results[0].issue).toBe('Заголовок пустой');
   });
@@ -52,16 +54,18 @@ describe('checkStructure', () => {
     mockPage.evaluate
       .mockResolvedValueOnce(10)
       .mockImplementationOnce(async () => {
-        return [{
-          moduleName: 'Структура интерфейса',
-          item: 'h3',
-          issue: 'Пропущен уровень заголовка (предыдущий h1)',
-          status: 'warning',
-        }];
+        return [
+          {
+            moduleName: 'Структура интерфейса',
+            item: 'h3',
+            issue: 'Пропущен уровень заголовка (предыдущий h1)',
+            status: 'warning',
+          },
+        ];
       });
 
     const results = await checkStructure(mockPage);
-    
+
     expect(results[0].status).toBe('warning');
   });
 
@@ -69,16 +73,18 @@ describe('checkStructure', () => {
     mockPage.evaluate
       .mockResolvedValueOnce(10)
       .mockImplementationOnce(async () => {
-        return [{
-          moduleName: 'Структура интерфейса',
-          item: 'body',
-          issue: 'Отсутствует тег <main>',
-          status: 'warning',
-        }];
+        return [
+          {
+            moduleName: 'Структура интерфейса',
+            item: 'body',
+            issue: 'Отсутствует тег <main>',
+            status: 'warning',
+          },
+        ];
       });
 
     const results = await checkStructure(mockPage);
-    
+
     expect(results[0].status).toBe('warning');
     expect(results[0].issue).toBe('Отсутствует тег <main>');
   });
@@ -87,16 +93,18 @@ describe('checkStructure', () => {
     mockPage.evaluate
       .mockResolvedValueOnce(10)
       .mockImplementationOnce(async () => {
-        return [{
-          moduleName: 'Структура интерфейса',
-          item: 'ul',
-          issue: 'Список содержит элемент, не являющийся <li>',
-          status: 'error',
-        }];
+        return [
+          {
+            moduleName: 'Структура интерфейса',
+            item: 'ul',
+            issue: 'Список содержит элемент, не являющийся <li>',
+            status: 'error',
+          },
+        ];
       });
 
     const results = await checkStructure(mockPage);
-    
+
     expect(results[0].status).toBe('error');
   });
 
@@ -104,16 +112,18 @@ describe('checkStructure', () => {
     mockPage.evaluate
       .mockResolvedValueOnce(10)
       .mockImplementationOnce(async () => {
-        return [{
-          moduleName: 'Структура интерфейса',
-          item: 'table',
-          issue: 'Таблица должна содержать <thead> и <tbody>',
-          status: 'warning',
-        }];
+        return [
+          {
+            moduleName: 'Структура интерфейса',
+            item: 'table',
+            issue: 'Таблица должна содержать <thead> и <tbody>',
+            status: 'warning',
+          },
+        ];
       });
 
     const results = await checkStructure(mockPage);
-    
+
     expect(results[0].status).toBe('warning');
   });
 
@@ -121,16 +131,18 @@ describe('checkStructure', () => {
     mockPage.evaluate
       .mockResolvedValueOnce(10)
       .mockImplementationOnce(async () => {
-        return [{
-          moduleName: 'Структура интерфейса',
-          item: 'table',
-          issue: 'Таблица должна содержать хотя бы один <th>',
-          status: 'warning',
-        }];
+        return [
+          {
+            moduleName: 'Структура интерфейса',
+            item: 'table',
+            issue: 'Таблица должна содержать хотя бы один <th>',
+            status: 'warning',
+          },
+        ];
       });
 
     const results = await checkStructure(mockPage);
-    
+
     expect(results[0].status).toBe('warning');
   });
 
@@ -138,16 +150,18 @@ describe('checkStructure', () => {
     mockPage.evaluate
       .mockResolvedValueOnce(10)
       .mockImplementationOnce(async () => {
-        return [{
-          moduleName: 'Структура интерфейса',
-          item: 'input',
-          issue: 'Поле формы без связанного <label>',
-          status: 'error',
-        }];
+        return [
+          {
+            moduleName: 'Структура интерфейса',
+            item: 'input',
+            issue: 'Поле формы без связанного <label>',
+            status: 'error',
+          },
+        ];
       });
 
     const results = await checkStructure(mockPage);
-    
+
     expect(results[0].status).toBe('error');
   });
 
@@ -155,7 +169,7 @@ describe('checkStructure', () => {
     mockPage.evaluate.mockRejectedValue(new Error('Puppeteer error'));
 
     const results = await checkStructure(mockPage);
-    
+
     expect(results[0]).toEqual({
       moduleName: 'Структура интерфейса',
       item: 'Ошибка',
