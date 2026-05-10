@@ -50,3 +50,55 @@
 .dot {
   opacity: 0.5;
 }
+
+@media (max-width: 768px) {
+  .header {
+    flex-direction: column;
+    padding: 16px;
+    gap: 12px;
+  }
+  
+  .logo-container {
+    width: 100%;
+    justify-content: center;
+  }
+  
+  .header-nav {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px;
+  }
+  
+  .header-nav a {
+    padding: 6px 12px;
+    font-size: 13px;
+  }
+  
+  .dot {
+    display: none;
+  }
+}
+
+@media (max-width: 480px) {
+  .header {
+    padding: 12px;
+  }
+  
+  .title {
+    font-size: 16px;
+  }
+  
+  .logo-image {
+    width: 28px;
+    height: 28px;
+  }
+  
+  .header-nav {
+    gap: 6px;
+  }
+  
+  .header-nav a {
+    padding: 5px 10px;
+    font-size: 12px;
+  }
+}

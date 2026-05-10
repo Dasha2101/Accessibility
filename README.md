@@ -22,32 +22,17 @@
 - Puppeteer
 - Cheerio
 - Axios
-- PM2
+
 
 ### Frontend
 - React
 - TypeScript
 - Vite
 
-## Установка
+### DevOps
+- Docker
+- Github Action
 
-```bash
-git clone repo
-cd my-app
-npm install
-```
-
-## Запуск
-
-### Frontend
-```bash
-npm run dev
-```
-### Backend (сервер)
-```bash
-pm2 start src/services/services.ts --name accessibility-api --interpreter tsx
-```
-```md
 ## Структура проекта
 
 ### Backend
