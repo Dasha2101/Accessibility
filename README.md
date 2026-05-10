@@ -23,7 +23,6 @@
 - Cheerio
 - Axios
 
-
 ### Frontend
 - React
 - TypeScript
