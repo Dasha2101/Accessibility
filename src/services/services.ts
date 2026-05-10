@@ -36,7 +36,13 @@ app.post('/api/check-all', async (req, res) => {
 
     page = await createPage();
 
-    const { data: html } = await axios.get(url, { timeout: 60000 });
+    const { data: html } = await axios.get(url, {
+      timeout: 60000,
+      headers: {
+      'User-Agent':
+        'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/123.0.0.0 Safari/537.36',
+      },
+    });
     const $ = cheerio.load(html);
 
     await safeGoto(page, url);
