@@ -31,35 +31,54 @@ app.post('/api/check-all', async (req, res) => {
   let page = null;
   const results: ModuleCheckResult[] = [];
 
+  let htmlDOM = null;
+
   try {
     await initBrowser();
-
     page = await createPage();
 
-    const { data: html } = await axios.get(url, {
-      timeout: 60000,
-      headers: {
-      'User-Agent':
-        'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/123.0.0.0 Safari/537.36',
-      },
-    });
-    const $ = cheerio.load(html);
+    try {
+      const { data: html } = await axios.get(url, {
+        timeout: 60000,
+        headers: {
+          'User-Agent':
+            'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/123.0.0.0 Safari/537.36',
+        },
+      });
 
-    await safeGoto(page, url);
+      htmlDOM = cheerio.load(html);
+    } catch {
+      htmlDOM = null;
+    }
 
+    try {
+      await safeGoto(page, url);
+    } catch {
+      return res.status(200).json([
+        {
+          moduleName: 'Доступность страницы',
+          item: url,
+          issue: 'Страница недоступна для автоматизированного анализа',
+          status: 'warning',
+        },
+      ]);
+    }
     const limits = await getPageLimits(page);
     const options: CheckOptions = { limits };
+    if (htmlDOM) {
+      results.push(...checkAltAtributes(htmlDOM, options));
+      results.push(...checkARIAAttributes(htmlDOM, options));
+    }
 
-    results.push(...checkAltAtributes($, options));
-    results.push(...checkARIAAttributes($, options));
     results.push(...(await checkContrast(page, options)));
     results.push(...(await checkKeyBoard(page, options)));
     results.push(...(await checkStructure(page, options)));
     results.push(...(await checkScalability(page, options)));
 
-    await page
-      .waitForSelector('video, audio', { timeout: 5000 })
-      .catch(() => {});
+    try {
+      await page.waitForSelector('video, audio', { timeout: 5000 });
+    } catch {}
+
     results.push(...(await checkMedia(page, options)));
 
     res.json(results);
