@@ -18,6 +18,13 @@
     "forceConsistentCasingInFileNames": true
   },
 
-  "include": ["src/**/*"],
+  "include": [
+  "src/services/**/*",
+  "src/browser/**/*",
+  "src/modules/**/*",
+  "src/types/**/*",
+  "src/utils/**/*"
+  ],
+  
   "exclude": ["node_modules", "dist"]
 }
