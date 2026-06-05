@@ -29,7 +29,7 @@ const MainPage: React.FC = () => {
     setLoading(true);
 
     try {
-      const response = await fetch('/api/check', {
+      const response = await fetch('/api/check-all', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ url }),

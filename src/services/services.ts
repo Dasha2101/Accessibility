@@ -20,7 +20,7 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-app.post('/api/check', async (req, res) => {
+app.post('/api/check-all', async (req, res) => {
   const { url } = req.body;
 
   if (!url) {

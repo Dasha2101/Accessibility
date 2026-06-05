@@ -30,7 +30,7 @@ describe('Server API', () => {
   const mockPage = {
     close: jest.fn().mockResolvedValue(undefined),
     waitForSelector: jest.fn().mockRejectedValue(new Error('Not found')),
-    evaluate: jest.fn().mockResolvedValue({ maxElements: 100 }), // Добавляем evaluate
+    evaluate: jest.fn().mockResolvedValue({ maxElements: 100 }),
   };
 
   beforeEach(() => {
