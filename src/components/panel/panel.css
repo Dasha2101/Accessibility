@@ -1,4 +1,3 @@
-/* panel.css */
 .export-panel {
   display: flex;
   align-items: center;
@@ -49,7 +48,6 @@
   transform: translateY(-2px);
 }
 
-/* Иконки перед текстом кнопок */
 .export-panel .export-button:nth-child(2)::before {
   content: '📄';
   margin-right: 6px;
@@ -65,19 +63,71 @@
   margin-right: 6px;
 }
 
+@media (max-width: 1024px) {
+  .export-panel {
+    margin: var(--space-4) 12px;
+    padding: var(--space-4);
+  }
+
+  .button-group {
+    gap: var(--space-2);
+  }
+}
+
 @media (max-width: 768px) {
   .export-panel {
     flex-direction: column;
     align-items: stretch;
+    text-align: center;
     padding: var(--space-3);
   }
-  
+
   .export-panel p {
     justify-content: center;
     text-align: center;
+    font-size: var(--fs-sm);
   }
-  
+
   .button-group {
     justify-content: center;
+    width: 100%;
+  }
+
+  .export-panel .export-button {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .export-panel {
+    margin: var(--space-3) 10px;
+    padding: var(--space-3);
+  }
+
+  .export-panel p {
+    font-size: 14px;
+  }
+
+  .button-group {
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+
+  .export-panel .export-button {
+    width: 100%;
+    font-size: 14px;
+    padding: 10px 16px;
+  }
+}
+
+@media (max-width: 360px) {
+  .export-panel p {
+    font-size: 13px;
+  }
+
+  .export-panel .export-button {
+    font-size: 13px;
+    padding: 10px 14px;
   }
 }

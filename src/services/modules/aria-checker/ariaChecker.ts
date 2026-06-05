@@ -2,12 +2,10 @@ import type { CheerioAPI } from 'cheerio';
 import type {
   ModuleCheckResult,
   CheckStatus,
-  CheckOptions,
 } from '../../../types/types';
 
 export const checkARIAAttributes = (
   $: CheerioAPI,
-  options?: CheckOptions,
 ): ModuleCheckResult[] => {
   const selector = 'a[href], button, input, select, textarea, [role]';
 
@@ -43,7 +41,7 @@ export const checkARIAAttributes = (
 
     const role = $el.attr('role');
     const ariaLabel = $el.attr('aria-label');
-    const textContent = $el.text().trim();
+    const textContent = $el.text().trim().replace(/\s+/g, ' ');
 
     const identifier = ariaLabel || $el.attr('id') || tag;
 
@@ -62,8 +60,11 @@ export const checkARIAAttributes = (
         'error',
       );
     }
+    const ariaLabelledBy = $el.attr('aria-labelledby');
 
-    if (!textContent && !ariaLabel && tag !== 'input') {
+    const hasName = Boolean(ariaLabel || textContent || ariaLabelledBy);
+
+    if (!hasName) {
       addResult(identifier, 'Нет aria-label или видимого текста', 'error');
     }
 

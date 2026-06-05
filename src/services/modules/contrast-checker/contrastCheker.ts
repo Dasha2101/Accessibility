@@ -7,7 +7,6 @@ const MIN_CONTRAST_RATIO_LARGE_TEXT = 3;
 
 export const checkContrast = async (
   page: Page,
-  options?: { maxElements?: number },
 ): Promise<ModuleCheckResult[]> => {
   try {
     const elementsData = await page.evaluate(() => {

@@ -14,14 +14,14 @@ import { checkScalability } from './modules/scalability-checker/scalabilityCheck
 import { checkARIAAttributes } from './modules/aria-checker/ariaChecker';
 import { checkMedia } from './modules/media-checker/mediaChecker';
 
-import type { ModuleCheckResult, CheckOptions } from '../types/types';
-import { getPageLimits } from '../utils/limits/limits';
+import type { ModuleCheckResult } from '../types/types';
+
 
 const app = express();
 app.use(cors());
 app.use(express.json());
 
-app.post('/api/check-all', async (req, res) => {
+app.post('/api/check', async (req, res) => {
   const { url } = req.body;
 
   if (!url) {
@@ -63,23 +63,21 @@ app.post('/api/check-all', async (req, res) => {
         },
       ]);
     }
-    const limits = await getPageLimits(page);
-    const options: CheckOptions = { limits };
     if (htmlDOM) {
-      results.push(...checkAltAtributes(htmlDOM, options));
-      results.push(...checkARIAAttributes(htmlDOM, options));
+      results.push(...checkAltAtributes(htmlDOM));
+      results.push(...checkARIAAttributes(htmlDOM));
     }
 
-    results.push(...(await checkContrast(page, options)));
-    results.push(...(await checkKeyBoard(page, options)));
-    results.push(...(await checkStructure(page, options)));
-    results.push(...(await checkScalability(page, options)));
+    results.push(...(await checkContrast(page)));
+    results.push(...(await checkKeyBoard(page)));
+    results.push(...(await checkStructure(page)));
+    results.push(...(await checkScalability(page)));
 
     try {
       await page.waitForSelector('video, audio', { timeout: 5000 });
     } catch {}
 
-    results.push(...(await checkMedia(page, options)));
+    results.push(...(await checkMedia(page)));
 
     res.json(results);
   } catch (err) {

@@ -8,7 +8,6 @@ let activePages = 0;
 
 export const initBrowser = async (): Promise<Browser> => {
   if (browser) return browser;
-
   if (launching) return launching;
 
   launching = puppeteer.launch({
@@ -38,7 +37,6 @@ export const createPage = async (): Promise<Page> => {
   if (!instance) {
     throw new Error('Браузер не инициализирован');
   }
-
   if (activePages >= MAX_PAGES) {
     throw new Error('Превышено максимальное количество активных страниц');
   }
@@ -66,7 +64,7 @@ export const createPage = async (): Promise<Page> => {
     });
   } catch (err) {
     browser = null;
-    throw new Error('Failed to create page (browser crashed)');
+    throw new Error('Не удалось открыть страницу (browser crashed)');
   }
 
   activePages++;
@@ -84,6 +82,10 @@ export const safeGoto = async (page: Page, url: string): Promise<void> => {
       timeout: 30000,
     });
   } catch (err) {
+    try {
+      await page.close();
+    } catch {}
+
     throw new Error('Страница недоступна для автоматизированного анализа');
   }
 };

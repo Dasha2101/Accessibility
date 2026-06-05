@@ -60,6 +60,28 @@
   width: 100%;
 }
 
+.errorText {
+  color: red;
+  text-align: center;
+  margin-top: 10px;
+}
+
+@media (max-width: 1024px) {
+  .hero {
+    padding: 50px 32px;
+    justify-content: space-between;
+  }
+
+  .hero-image {
+    width: 160px;
+    height: 160px;
+  }
+
+  .page-title {
+    font-size: 26px;
+  }
+}
+
 @media (max-width: 768px) {
   .hero {
     flex-direction: column;
@@ -124,5 +146,24 @@
   .search-container {
     padding: 0 var(--space-2);
     margin: var(--space-3) auto;
+  }
+}
+
+@media (max-width: 360px) {
+  .hero {
+    padding: 24px 12px;
+  }
+
+  .page-title {
+    font-size: 18px;
+  }
+
+  .hero-image {
+    width: 90px;
+    height: 90px;
+  }
+
+  .page-subtitle {
+    font-size: 12px;
   }
 }

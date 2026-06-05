@@ -2,14 +2,13 @@ import type { CheerioAPI } from 'cheerio';
 import type {
   ModuleCheckResult,
   CheckStatus,
-  CheckOptions,
 } from '../../../types/types';
+import { isAltSuspicious } from '../../../utils/alt/alt';
 
 const GENERIC_ALT_VALUES = ['image', 'photo', 'picture', 'img'];
 
 export const checkAltAtributes = (
   $: CheerioAPI,
-  options?: CheckOptions,
 ): ModuleCheckResult[] => {
   const allImages = $('img');
   const results: ModuleCheckResult[] = [];
@@ -50,7 +49,7 @@ export const checkAltAtributes = (
       return;
     }
 
-    if (altTrim.length < 3) {
+    if (altTrim.length < 3 && !/^[a-z]{2}$/i.test(altTrim)) {
       results.push({
         moduleName: 'Альтернативный текст',
         item: src,
@@ -58,8 +57,21 @@ export const checkAltAtributes = (
         status: 'warning' as CheckStatus,
       });
     }
-  });
 
+    if (altTrim.length >= 3) {
+      const suspicious =
+        src !== 'Не указан src' && isAltSuspicious(altTrim, src);
+
+      if (suspicious) {
+        results.push({
+          moduleName: 'Альтернативный текст',
+          item: src,
+          issue: 'alt может не соответствовать содержимому изображения',
+          status: 'warning' as CheckStatus,
+        });
+      }
+    }
+  });
   if (results.length === 0) {
     results.push({
       moduleName: 'Альтернативный текст',

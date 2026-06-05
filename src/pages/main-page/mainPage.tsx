@@ -29,11 +29,11 @@ const MainPage: React.FC = () => {
     setLoading(true);
 
     try {
-      const response = await fetch('http://213.171.3.128:3001/api/check-all', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ url }),
-      });
+      const response = await fetch('/api/check', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ url }),
+    });
 
       if (!response.ok) {
         setError(`Ошибка запроса к серверу: ${response.status}`);
@@ -79,7 +79,7 @@ const MainPage: React.FC = () => {
         </Button>
       </div>
 
-      {error && <p style={{ color: 'red' }}>{error}</p>}
+      {error && <p className="errorText">{error}</p>}
 
       <Filters results={results} filters={filters} setFilters={setFilters} />
       <ResultTable results={filteredResults} />

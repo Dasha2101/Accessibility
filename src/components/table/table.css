@@ -165,6 +165,20 @@
   font-weight: 500;
 }
 
+@media (max-width: 1024px) {
+  .result-table-wrapper {
+    margin: var(--space-4) 0;
+  }
+
+  .result-table {
+    min-width: 520px;
+  }
+
+  .pagination {
+    gap: var(--space-2);
+  }
+}
+
 @media (max-width: 768px) {
   .result-table-wrapper {
     margin: var(--space-3) 0;
@@ -269,5 +283,25 @@
   
   .empty-state::before {
     font-size: 40px;
+  }
+}
+
+@media (max-width: 360px) {
+  .result-table {
+    min-width: 380px;
+    font-size: 10px;
+  }
+
+  .result-table th,
+  .result-table td {
+    padding: 6px 8px;
+  }
+
+  .pagination span {
+    font-size: 11px;
+  }
+
+  .empty-state::before {
+    font-size: 36px;
   }
 }

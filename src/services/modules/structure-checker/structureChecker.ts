@@ -2,18 +2,13 @@ import { Page } from 'puppeteer';
 import type {
   ModuleCheckResult,
   CheckStatus,
-  CheckOptions,
 } from '../../../types/types';
 
 export const checkStructure = async (
   page: Page,
-  options?: CheckOptions,
 ): Promise<ModuleCheckResult[]> => {
   try {
-    const totalElements = await page.evaluate(
-      () => document.body.querySelectorAll('*').length,
-    );
-    const results: ModuleCheckResult[] = await page.evaluate(() => {
+      const results = await page.evaluate(() => {
       const results: ModuleCheckResult[] = [];
       const seenItems = new Set<string>();
 
@@ -35,17 +30,17 @@ export const checkStructure = async (
       );
       const headers = elements.filter((el) => /^H[1-6]$/.test(el.tagName));
 
-      let lastLevel = 0;
+      let lastLevel: number | null = null;
 
       headers.forEach((el) => {
-        const level = parseInt(el.tagName[1], 10);
+        const level = parseInt(el.tagName[1]);
         const text = el.textContent?.trim() || '';
 
         if (!text) {
           addResult(el.tagName.toLowerCase(), 'Заголовок пустой', 'error');
         }
 
-        if (lastLevel && level - lastLevel > 1) {
+        if (lastLevel !== null && level - lastLevel > 1) {
           addResult(
             el.tagName.toLowerCase(),
             `Пропущен уровень заголовка (предыдущий h${lastLevel})`,

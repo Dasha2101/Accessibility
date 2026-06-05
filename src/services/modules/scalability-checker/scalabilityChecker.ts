@@ -1,90 +1,83 @@
 import { Page } from 'puppeteer';
-import type {
-  ModuleCheckResult,
-  CheckStatus,
-  CheckOptions,
-} from '../../../types/types';
+import type { ModuleCheckResult, CheckStatus } from '../../../types/types';
 
 export const SCALE_FACTORS = [1.5, 2];
 export const checkScalability = async (
   page: Page,
-  options?: CheckOptions,
 ): Promise<ModuleCheckResult[]> => {
   try {
-    const totalElements = await page.evaluate(() => {
-      return Array.from(
+    const results = await page.evaluate((scaleFactors: number[]) => {
+      const results: ModuleCheckResult[] = [];
+      const seenItems = new Set<string>();
+
+      const addResult = (item: string, issue: string, status: CheckStatus) => {
+        const key = `${item}-${issue}-${status}`;
+        if (!seenItems.has(key)) {
+          results.push({
+            moduleName: 'Масштабируемость',
+            item,
+            issue,
+            status,
+          });
+          seenItems.add(key);
+        }
+      };
+
+      const elements = Array.from(
         document.body.querySelectorAll<HTMLElement>('body *'),
-      ).filter((el) => el.offsetParent !== null).length;
-    });
-    const results: ModuleCheckResult[] = await page.evaluate(
-      (scaleFactors: number[]) => {
-        const results: ModuleCheckResult[] = [];
-        const seenItems = new Set<string>();
+      ).filter((el) => el.offsetParent !== null);
 
-        const addResult = (
-          item: string,
-          issue: string,
-          status: CheckStatus,
-        ) => {
-          const key = `${item}-${issue}-${status}`;
-          if (!seenItems.has(key)) {
-            results.push({
-              moduleName: 'Масштабируемость',
-              item,
-              issue,
-              status,
-            });
-            seenItems.add(key);
-          }
-        };
+      scaleFactors.forEach((scale) => {
+        elements.forEach((element) => {
+          const originalTransform = element.style.transform;
+          const originalTransformOrigin = element.style.transformOrigin;
 
-        const elements = Array.from(
-          document.body.querySelectorAll<HTMLElement>('body *'),
-        ).filter((el) => el.offsetParent !== null);
+          element.style.transformOrigin = 'top left';
+          element.style.transform = `scale(${scale})`;
 
-        scaleFactors.forEach((scale) => {
-          elements.forEach((el) => {
-            const originalTransform = el.style.transform;
+          const rect = element.getBoundingClientRect();
+          const parent = element.parentElement;
 
-            el.style.transformOrigin = 'top left';
-            el.style.transform = `scale(${scale})`;
+          if (parent) {
+            const parentStyle = window.getComputedStyle(parent);
 
-            const rect = el.getBoundingClientRect();
-            const parent = el.parentElement;
+            const hasClipping =
+              parentStyle.overflow === 'hidden' ||
+              parentStyle.overflowX === 'hidden' ||
+              parentStyle.overflowY === 'hidden';
 
             if (
-              parent &&
+              hasClipping &&
               (rect.width > parent.clientWidth ||
                 rect.height > parent.clientHeight)
             ) {
               addResult(
-                el.tagName.toLowerCase() + (el.id ? `#${el.id}` : ''),
+                element.tagName.toLowerCase() +
+                  (element.id ? `#${element.id}` : ''),
                 `Элемент может обрезаться при масштабе ${scale * 100}%`,
                 'warning',
               );
             }
+          }
 
-            el.style.transform = originalTransform;
-          });
+          element.style.transform = originalTransform;
+          element.style.transformOrigin = originalTransformOrigin;
         });
+      });
+      if (results.length === 0) {
+        results.push({
+          moduleName: 'Масштабируемость',
+          item: 'Все элементы',
+          issue: 'Ошибки не найдены',
+          status: 'success',
+        });
+      }
 
-        if (results.length === 0) {
-          results.push({
-            moduleName: 'Масштабируемость',
-            item: 'Все элементы',
-            issue: 'Ошибки не найдены',
-            status: 'success',
-          });
-        }
-
-        return results;
-      },
-      SCALE_FACTORS,
-      totalElements,
-    );
+      return results;
+    }, SCALE_FACTORS);
 
     return results;
-  } catch (error) {
+  } catch {
     return [
       {
         moduleName: 'Масштабируемость',

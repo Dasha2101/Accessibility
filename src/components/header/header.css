@@ -51,6 +51,17 @@
   opacity: 0.5;
 }
 
+@media (max-width: 1024px) {
+  .header {
+    padding: 14px 24px;
+  }
+
+  .header-nav {
+    font-size: 13px;
+    gap: 8px;
+  }
+}
+
 @media (max-width: 768px) {
   .header {
     flex-direction: column;
@@ -100,5 +111,17 @@
   .header-nav a {
     padding: 5px 10px;
     font-size: 12px;
+  }
+}
+
+@media (max-width: 360px) {
+  .header-nav {
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .header-nav a {
+    width: 100%;
+    text-align: center;
   }
 }

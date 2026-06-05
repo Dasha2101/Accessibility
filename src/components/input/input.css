@@ -56,6 +56,16 @@
   transform: scaleX(1);
 }
 
+@media (max-width: 1024px) {
+  .url-input {
+    max-width: 420px;
+  }
+
+  .url-input__field {
+    padding: 13px 18px;
+  }
+}
+
 @media (max-width: 768px) {
   .url-input {
     max-width: 100%;
@@ -81,5 +91,12 @@
   .url-input__decor {
     height: 2px;
     margin-top: 6px;
+  }
+}
+
+@media (max-width: 360px) {
+  .url-input__field {
+    padding: 10px 12px;
+    font-size: 13px;
   }
 }

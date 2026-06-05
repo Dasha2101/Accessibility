@@ -14,7 +14,7 @@ export const checkAltAtributes = ($, options) => {
       });
       return;
     }
-    
+
     const altTrim = alt.trim().toLowerCase();
     if (altTrim === '') {
       results.push({

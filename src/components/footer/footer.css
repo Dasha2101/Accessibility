@@ -148,6 +148,16 @@
   pointer-events: none;
 }
 
+@media (max-width: 1024px) {
+  .footer-left {
+    margin: 0 40px;
+  }
+
+  .footer {
+    gap: var(--space-4);
+  }
+}
+
 @media (max-width: 768px) {
   .footer {
     flex-direction: column;
@@ -155,104 +165,91 @@
     gap: var(--space-4);
     text-align: center;
   }
-  
+
+  .footer-left {
+    margin: 0;
+    min-width: auto;
+  }
+
+  .footer-right {
+    min-width: auto;
+    text-align: center;
+  }
+
   .footer-slogan {
     font-size: var(--fs-md);
     text-align: center;
   }
-  
-  .footer-slogan-highlight::after {
-    display: none;
-  }
-  
+
   .footer-contacts {
     justify-content: center;
+    gap: var(--space-4);
   }
-  
-  .footer-right {
-    text-align: center;
+
+  .contact-item svg {
+    width: 44px;
+    height: 44px;
   }
-  
+
   .footer-right h4::after {
     left: 50%;
     transform: translateX(-50%);
   }
-  
-  .footer-right a::after {
+
+  .footer-right ul {
+    align-items: center;
+  }
+
+  .footer-slogan-highlight::after {
     display: none;
   }
-  
+
   .footer::before {
     font-size: 40px;
     opacity: 0.05;
   }
 }
 
-@keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.footer {
-  animation: fadeInUp 0.5s ease-out;
-}
-
-@media (max-width: 768px) {
-  .footer-left {
-    margin: 0 20px;
-    min-width: auto;
-  }
-  
-  .footer-right {
-    min-width: auto;
-  }
-  
-  .footer-contacts {
-    gap: var(--space-4);
-  }
-  
-  .contact-item svg {
-    width: 40px;
-    height: 40px;
-  }
-  
-  .footer-right ul {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
-}
-
 @media (max-width: 480px) {
-  .footer-left {
-    margin: 0 16px;
+  .footer {
+    padding: var(--space-3);
   }
-  
+
   .footer-slogan {
     font-size: var(--fs-sm);
   }
-  
-  .footer-contacts {
-    flex-wrap: wrap;
-    justify-content: center;
-  }
-  
+
   .contact-item svg {
-    width: 36px;
-    height: 36px;
+    width: 38px;
+    height: 38px;
   }
-  
+
   .footer-right h4 {
     font-size: var(--fs-sm);
   }
-  
+
   .footer-right p {
     font-size: var(--fs-xs);
+  }
+
+  .footer-contacts {
+    flex-wrap: wrap;
+    gap: var(--space-3);
+  }
+}
+
+@media (max-width: 360px) {
+  .footer-slogan {
+    font-size: 14px;
+  }
+
+  .contact-item svg {
+    width: 34px;
+    height: 34px;
+    padding: 6px;
+  }
+
+  .footer {
+    gap: var(--space-3);
   }
 }

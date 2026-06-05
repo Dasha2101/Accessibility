@@ -2,13 +2,11 @@ import { Page } from 'puppeteer';
 import type {
   ModuleCheckResult,
   CheckStatus,
-  CheckOptions,
 } from '../../../types/types';
 import { INTERACTIVE_SELECTORS } from '../../../utils/keyboard/keyboard';
 
 export const checkKeyBoard = async (
   page: Page,
-  options?: CheckOptions,
 ): Promise<ModuleCheckResult[]> => {
   try {
     const results: ModuleCheckResult[] = await page.evaluate(
@@ -38,7 +36,8 @@ export const checkKeyBoard = async (
           return (
             style.display === 'none' ||
             style.visibility === 'hidden' ||
-            style.opacity === '0'
+            style.opacity === '0' ||
+            el.hasAttribute('hidden')
           );
         };
 
@@ -81,7 +80,17 @@ export const checkKeyBoard = async (
             );
           }
 
-          if (!isNaturallyFocusable(el) && !hasFocusableTabIndex(el)) {
+          const isInteractive =
+            isNaturallyFocusable(el) ||
+            hasFocusableTabIndex(el) ||
+            el.getAttribute('role') === 'button' ||
+            el.getAttribute('role') === 'link';
+
+          if (
+            isInteractive &&
+            !hasFocusableTabIndex(el) &&
+            !isNaturallyFocusable(el)
+          ) {
             addResult(identifier, 'Элемент недоступен с клавиатуры', 'error');
           }
 
@@ -93,7 +102,7 @@ export const checkKeyBoard = async (
             );
           }
 
-          if (style.outlineStyle === 'none' || style.outlineWidth === '0px') {
+          if (style.outlineStyle === 'none' && style.boxShadow === 'none') {
             addResult(
               identifier,
               'Фокус не имеет видимого индикатора',

@@ -46,3 +46,18 @@
     font-size: var(--fs-sm);
   }
 }
+
+@media (max-width: 480px) {
+  .export-button {
+    padding: 10px 18px;
+    font-size: 14px;
+    width: 100%;
+  }
+}
+
+@media (max-width: 360px) {
+  .export-button {
+    padding: 10px 14px;
+    font-size: 13px;
+  }
+}

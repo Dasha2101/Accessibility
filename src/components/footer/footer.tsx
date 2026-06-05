@@ -3,7 +3,7 @@ import './footer.css';
 
 const FooterElem: React.FC = () => {
   return (
-    <footer className="footer">
+    <footer id="footer" className="footer">
       <div className="footer-left">
         <p className="footer-slogan">
           Access, Check, Enjoy.{' '}

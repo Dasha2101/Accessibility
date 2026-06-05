@@ -66,7 +66,7 @@ const Panel: React.FC<PanelProps> = ({ results }) => {
   };
 
   return (
-    <div className="export-panel">
+    <div id="about" className="export-panel">
       <p>Вы можете сохранить ваши результаты в удобном для вас формате</p>
       <div className="button-group">
         <Button children="Export JSON" onClick={exportJSON} />
