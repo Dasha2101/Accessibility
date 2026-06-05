@@ -1,5 +1,5 @@
 import { Page } from 'puppeteer';
-import type { ModuleCheckResult, CheckStatus } from '../../../types/types';
+import type { ModuleCheckResult } from '../../../types/types';
 import { INTERACTIVE_SELECTORS } from '../../../utils/keyboard/keyboard';
 
 export const checkKeyBoard = async (
@@ -8,24 +8,31 @@ export const checkKeyBoard = async (
   try {
     const results: ModuleCheckResult[] = await page.evaluate(
       (selectors: string[]) => {
-        const results: ModuleCheckResult[] = [];
+        const results: {
+          moduleName: string;
+          item: string;
+          issue: string;
+          status: 'success' | 'warning' | 'error';
+        }[] = [];
+
         const seenItems = new Set<string>();
 
         const addResult = (
           item: string,
           issue: string,
-          status: CheckStatus,
+          status: 'success' | 'warning' | 'error',
         ) => {
-          const key = `${item}-${issue}-${status}`;
-          if (!seenItems.has(key)) {
-            results.push({
-              moduleName: 'Клавиатурная навигация',
-              item,
-              issue,
-              status,
-            });
-            seenItems.add(key);
-          }
+          const key = `${item}|${issue}|${status}`;
+          if (seenItems.has(key)) return;
+
+          results.push({
+            moduleName: 'Клавиатурная навигация',
+            item,
+            issue,
+            status,
+          });
+
+          seenItems.add(key);
         };
 
         const isHidden = (el: HTMLElement): boolean => {

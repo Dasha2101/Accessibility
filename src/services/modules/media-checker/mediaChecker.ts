@@ -3,11 +3,23 @@ import type { ModuleCheckResult, CheckStatus } from '../../../types/types';
 
 export const checkMedia = async (page: Page): Promise<ModuleCheckResult[]> => {
   try {
-    const results = await page.evaluate(() => {
-      const results: ModuleCheckResult[] = [];
+    const results: ModuleCheckResult[] = await page.evaluate(() => {
+      const results: {
+        moduleName: string;
+        item: string;
+        issue: string;
+        status: 'success' | 'warning' | 'error';
+      }[] = [];
+
       const seenItems = new Set<string>();
-      const addResult = (item: string, issue: string, status: CheckStatus) => {
+
+      const addResult = (
+        item: string,
+        issue: string,
+        status: 'success' | 'warning' | 'error',
+      ) => {
         const key = `${item}-${issue}-${status}`;
+
         if (!seenItems.has(key)) {
           results.push({
             moduleName: 'Доступность мультимедиа',
@@ -15,6 +27,7 @@ export const checkMedia = async (page: Page): Promise<ModuleCheckResult[]> => {
             issue,
             status,
           });
+
           seenItems.add(key);
         }
       };

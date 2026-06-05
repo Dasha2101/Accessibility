@@ -18,6 +18,7 @@ const MainPage: React.FC = () => {
     module: 'all',
     status: 'all',
   });
+  console.log('NEW VERSION 123');
 
   const handleCheckAll = async () => {
     if (!url) {

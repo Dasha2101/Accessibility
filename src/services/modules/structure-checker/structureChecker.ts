@@ -5,12 +5,23 @@ export const checkStructure = async (
   page: Page,
 ): Promise<ModuleCheckResult[]> => {
   try {
-    const results = await page.evaluate(() => {
-      const results: ModuleCheckResult[] = [];
+    const results: ModuleCheckResult[] = await page.evaluate(() => {
+      const results: {
+        moduleName: string;
+        item: string;
+        issue: string;
+        status: 'success' | 'warning' | 'error';
+      }[] = [];
+
       const seenItems = new Set<string>();
 
-      const addResult = (item: string, issue: string, status: CheckStatus) => {
+      const addResult = (
+        item: string,
+        issue: string,
+        status: 'success' | 'warning' | 'error',
+      ) => {
         const key = `${item}-${issue}`;
+
         if (!seenItems.has(key)) {
           results.push({
             moduleName: 'Структура интерфейса',
@@ -18,6 +29,7 @@ export const checkStructure = async (
             issue,
             status,
           });
+
           seenItems.add(key);
         }
       };
