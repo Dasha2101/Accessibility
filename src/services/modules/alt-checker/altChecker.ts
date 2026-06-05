@@ -1,15 +1,10 @@
 import type { CheerioAPI } from 'cheerio';
-import type {
-  ModuleCheckResult,
-  CheckStatus,
-} from '../../../types/types';
+import type { ModuleCheckResult, CheckStatus } from '../../../types/types';
 import { isAltSuspicious } from '../../../utils/alt/alt';
 
 const GENERIC_ALT_VALUES = ['image', 'photo', 'picture', 'img'];
 
-export const checkAltAtributes = (
-  $: CheerioAPI,
-): ModuleCheckResult[] => {
+export const checkAltAtributes = ($: CheerioAPI): ModuleCheckResult[] => {
   const allImages = $('img');
   const results: ModuleCheckResult[] = [];
 

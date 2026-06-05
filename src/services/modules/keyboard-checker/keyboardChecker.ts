@@ -1,8 +1,5 @@
 import { Page } from 'puppeteer';
-import type {
-  ModuleCheckResult,
-  CheckStatus,
-} from '../../../types/types';
+import type { ModuleCheckResult, CheckStatus } from '../../../types/types';
 import { INTERACTIVE_SELECTORS } from '../../../utils/keyboard/keyboard';
 
 export const checkKeyBoard = async (

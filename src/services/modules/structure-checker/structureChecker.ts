@@ -1,14 +1,11 @@
 import { Page } from 'puppeteer';
-import type {
-  ModuleCheckResult,
-  CheckStatus,
-} from '../../../types/types';
+import type { ModuleCheckResult, CheckStatus } from '../../../types/types';
 
 export const checkStructure = async (
   page: Page,
 ): Promise<ModuleCheckResult[]> => {
   try {
-      const results = await page.evaluate(() => {
+    const results = await page.evaluate(() => {
       const results: ModuleCheckResult[] = [];
       const seenItems = new Set<string>();
 

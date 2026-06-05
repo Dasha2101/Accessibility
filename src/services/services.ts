@@ -16,7 +16,6 @@ import { checkMedia } from './modules/media-checker/mediaChecker';
 
 import type { ModuleCheckResult } from '../types/types';
 
-
 const app = express();
 app.use(cors());
 app.use(express.json());

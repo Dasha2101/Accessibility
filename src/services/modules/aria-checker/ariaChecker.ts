@@ -1,12 +1,7 @@
 import type { CheerioAPI } from 'cheerio';
-import type {
-  ModuleCheckResult,
-  CheckStatus,
-} from '../../../types/types';
+import type { ModuleCheckResult, CheckStatus } from '../../../types/types';
 
-export const checkARIAAttributes = (
-  $: CheerioAPI,
-): ModuleCheckResult[] => {
+export const checkARIAAttributes = ($: CheerioAPI): ModuleCheckResult[] => {
   const selector = 'a[href], button, input, select, textarea, [role]';
 
   const allElements = $(selector);

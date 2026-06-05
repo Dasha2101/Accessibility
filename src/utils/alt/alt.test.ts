@@ -19,19 +19,13 @@ describe('isAltSuspicious', () => {
 
   test('false если alt совпадает с url', () => {
     expect(
-      isAltSuspicious(
-        'cat photo',
-        'https://site.com/img/cat-photo.jpg',
-      ),
+      isAltSuspicious('cat photo', 'https://site.com/img/cat-photo.jpg'),
     ).toBe(false);
   });
 
   test('true если alt не совпадает с url', () => {
     expect(
-      isAltSuspicious(
-        'dog running',
-        'https://site.com/img/cat-photo.jpg',
-      ),
+      isAltSuspicious('dog running', 'https://site.com/img/cat-photo.jpg'),
     ).toBe(true);
   });
 });
