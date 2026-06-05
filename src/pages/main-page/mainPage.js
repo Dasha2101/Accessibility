@@ -25,7 +25,7 @@ const MainPage = () => {
     setError('');
     setLoading(true);
     try {
-      const response = await fetch('http://213.171.3.128:3001/api/check-all', {
+      const response = await fetch('/api/check', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ url }),
