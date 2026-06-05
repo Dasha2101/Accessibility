@@ -66,7 +66,6 @@ app.post('/api/check-all', async (req, res) => {
       results.push(...checkAltAtributes(htmlDOM));
       results.push(...checkARIAAttributes(htmlDOM));
     }
-
     results.push(...(await checkContrast(page)));
     results.push(...(await checkKeyBoard(page)));
     results.push(...(await checkStructure(page)));
