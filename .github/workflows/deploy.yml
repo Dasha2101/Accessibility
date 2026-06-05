@@ -24,12 +24,7 @@ jobs:
             git reset --hard origin/main
             
             docker-compose down --remove-orphans
-            docker rmi $(docker images -q accessibility_frontend) 2>/dev/null || true
-            
-            docker-compose build --no-cache frontend
-            docker-compose up -d --force-recreate
-            
-            docker cp accessibility_frontend_1:/usr/share/nginx/html/. /var/www/mikarus/
-            
-            echo "=== Done ==="
-            docker ps
+
+            docker-compose build --no-cache
+
+            docker-compose up -d --build
